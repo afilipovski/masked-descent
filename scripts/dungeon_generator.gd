@@ -2,10 +2,13 @@ extends TileMap
 
 @export var map_width: int = 50
 @export var map_height: int = 50
-@export var room_min_size: int = 5
-@export var room_max_size: int = 12
+@export var room_min_width: int = 6
+@export var room_max_width: int = 14
+@export var room_min_height: int = 4
+@export var room_max_height: int = 10
 @export var max_rooms: int = 15
 @export var min_room_spacing: int = 2
+@export var corridor_width: int = 3
 
 const FLOOR_SOURCE = 0
 const WALL_SOURCE = 1
@@ -47,8 +50,11 @@ func fill_with_walls():
 			set_cell(0, Vector2i(x, y), WALL_SOURCE, ATLAS_COORDS)
 
 func create_random_room() -> Rect2i:
-	var w = randi_range(room_min_size, room_max_size)
-	var h = randi_range(room_min_size, room_max_size)
+	var w = randi_range(room_min_width, room_max_width)
+	var h = randi_range(room_min_height, room_max_height)
+	# Ensure room is not square by regenerating if w == h
+	while w == h:
+		h = randi_range(room_min_height, room_max_height)
 	var x = randi_range(-map_width/2 + 1, map_width/2 - w - 1)
 	var y = randi_range(-map_height/2 + 1, map_height/2 - h - 1)
 	return Rect2i(x, y, w, h)
@@ -73,16 +79,21 @@ func get_room_center(room: Rect2i) -> Vector2i:
 
 func carve_corridor(start: Vector2i, end: Vector2i):
 	var current = start
+	var half_width = corridor_width / 2
 	
 	while current.x != end.x:
-		set_cell(0, current, FLOOR_SOURCE, ATLAS_COORDS)
+		for offset in range(-half_width, half_width + 1):
+			set_cell(0, Vector2i(current.x, current.y + offset), FLOOR_SOURCE, ATLAS_COORDS)
 		current.x += 1 if end.x > current.x else -1
 	
 	while current.y != end.y:
-		set_cell(0, current, FLOOR_SOURCE, ATLAS_COORDS)
+		for offset in range(-half_width, half_width + 1):
+			set_cell(0, Vector2i(current.x + offset, current.y), FLOOR_SOURCE, ATLAS_COORDS)
 		current.y += 1 if end.y > current.y else -1
 	
-	set_cell(0, end, FLOOR_SOURCE, ATLAS_COORDS)
+	for dx in range(-half_width, half_width + 1):
+		for dy in range(-half_width, half_width + 1):
+			set_cell(0, Vector2i(end.x + dx, end.y + dy), FLOOR_SOURCE, ATLAS_COORDS)
 
 func place_walls_around_floors():
 	var floor_cells = get_used_cells(0)
