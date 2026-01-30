@@ -2,8 +2,15 @@ extends CharacterBody2D
 
 
 const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
 
+func _ready():
+	add_to_group("player")
+	reset_position()
+
+func reset_position():
+	var tilemap = get_parent().get_node_or_null("TileMap")
+	if tilemap and tilemap.has_method("get_spawn_position"):
+		position = tilemap.get_spawn_position()
 
 func _physics_process(delta: float) -> void:
 	# 1. Get input for both horizontal (x) and vertical (y) axes
