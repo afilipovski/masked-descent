@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://cvhml3bqscuh2"]
+
+[ext_resource type="Script" uid="uid://dwee3snqflsaf" path="res://scripts/spell_projectile.gd" id="1_udihb"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ejm5d"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_udihb"]
+size = Vector2(2, 2)
+
+[node name="Node2D" type="CharacterBody2D" unique_id=1320933461]
+collision_layer = 8
+collision_mask = 5
+script = ExtResource("1_udihb")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=537457110]
+scale = Vector2(4, 4)
+texture = SubResource("PlaceholderTexture2D_ejm5d")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=18806260]
+scale = Vector2(4, 4)
+shape = SubResource("RectangleShape2D_udihb")
