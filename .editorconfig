@@ -2,3 +2,32 @@ root = true
 
 [*]
 charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# GDScript style guide: https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html
+[*.gd]
+indent_style = tab
+indent_size = 4
+max_line_length = 100
+
+# Scenes and resources
+[*.{tscn,tres,godot}]
+indent_style = tab
+indent_size = 4
+
+# Shaders
+[*.gdshader]
+indent_style = tab
+indent_size = 4
+
+# JSON and other data files
+[*.{json,import}]
+indent_style = space
+indent_size = 2
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = 120
