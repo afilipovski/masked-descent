@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 
 const SPEED = 300.0
+const STAIRS_SOURCE = 2
 
 func _ready():
 	add_to_group("player")
@@ -25,3 +26,19 @@ func _physics_process(delta: float) -> void:
 		velocity.y = move_toward(velocity.y, 0, SPEED)
 
 	move_and_slide()
+	
+	check_stairs()
+
+func check_stairs():
+	var tilemap = get_parent().get_node_or_null("TileMap")
+	if tilemap:
+		var tile_pos = tilemap.local_to_map(position)
+		var tile_source = tilemap.get_cell_source_id(0, tile_pos)
+		
+		if tile_source == STAIRS_SOURCE:
+			descend_to_next_level()
+
+func descend_to_next_level():
+	var tilemap = get_parent().get_node_or_null("TileMap")
+	if tilemap and tilemap.has_method("regenerate"):
+		tilemap.regenerate()
