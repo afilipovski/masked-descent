@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://cs0uiq4hqgsgr"]
+
+[ext_resource type="Script" uid="uid://dd1lh03go07b" path="res://scripts/enemy.gd" id="1_0g8kj"]
+[ext_resource type="Texture2D" uid="uid://b0dysdihj27pd" path="res://assets/dwarf_animated.png" id="2_uspnt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eid3i"]
+atlas = ExtResource("2_uspnt")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ycnfq"]
+atlas = ExtResource("2_uspnt")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pcix0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eid3i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ycnfq")
+}],
+"loop": true,
+"name": &"default",
+"speed": 2.5
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_eid3i"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ycnfq"]
+radius = 12.0
+
+[node name="Dwarf" type="CharacterBody2D" unique_id=830158451]
+script = ExtResource("1_0g8kj")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=879989605]
+sprite_frames = SubResource("SpriteFrames_pcix0")
+frame_progress = 0.45231882
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=41436332]
+position = Vector2(0, 4)
+shape = SubResource("CircleShape2D_eid3i")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=2023391107]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=518019176]
+position = Vector2(0, 4)
+shape = SubResource("CircleShape2D_ycnfq")
+
+[connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]
+[connection signal="body_exited" from="Hitbox" to="." method="_on_hitbox_body_exited"]
