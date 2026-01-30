@@ -2,8 +2,7 @@ extends CharacterBody2D
 
 const PROJECTILE_SPELL = preload("uid://cvhml3bqscuh2")
 
-const SPEED = 300.0
-const PROJECTILE_SPEED = 1
+const SPEED = 200.0
 const FIRE_COOLDOWN = 0.5 # Seconds between shots
 const STAIRS_SOURCE = 2
 
@@ -63,7 +62,7 @@ func shoot(direction: Vector2) -> void:
 	if projectile.has_method("set_direction"):
 		projectile.set_direction(direction)
 	elif "velocity" in projectile:
-		projectile.velocity = direction.normalized() * PROJECTILE_SPEED
+		projectile.velocity = direction.normalized()
 	elif "direction" in projectile:
 		projectile.direction = direction.normalized()
 

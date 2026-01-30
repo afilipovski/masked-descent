@@ -1,4 +1,4 @@
-class_name InputActions
+class_name Inputs
 
 const MOVE_LEFT = "move_left"
 const MOVE_RIGHT = "move_right"
