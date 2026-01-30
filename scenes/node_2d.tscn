@@ -3,8 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://b5x71iuusdvnu" path="res://assets/floor-test.png" id="1_4vge2"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
 [ext_resource type="Script" uid="uid://c7qk5anmpq1im" path="res://scripts/dungeon_generator.gd" id="3_04qyp"]
+[ext_resource type="Texture2D" uid="uid://b0mpuy4m3yxgp" path="res://assets/stairs.jpg" id="3_fws66"]
 [ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://character_body_2d.gd" id="3_j7wrs"]
-[ext_resource type="Texture2D" uid="uid://ci7rncgjbr4by" path="res://assets/dwarf.png" id="4_fws66"]
+[ext_resource type="Texture2D" uid="uid://bu510rq3khy0q" path="res://assets/main_character.png" id="5_04qyp"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0e48y"]
 texture = ExtResource("1_4vge2")
@@ -17,11 +18,17 @@ texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hh0fu"]
+texture = ExtResource("3_fws66")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
 [sub_resource type="TileSet" id="TileSet_epypp"]
 tile_size = Vector2i(32, 32)
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_0e48y")
 sources/1 = SubResource("TileSetAtlasSource_epypp")
+sources/2 = SubResource("TileSetAtlasSource_hh0fu")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_4vge2"]
 
@@ -38,7 +45,7 @@ script = ExtResource("3_04qyp")
 script = ExtResource("3_j7wrs")
 
 [node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D" unique_id=1880422211]
-texture = ExtResource("4_fws66")
+texture = ExtResource("5_04qyp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=1265427240]
 position = Vector2(0, 4)

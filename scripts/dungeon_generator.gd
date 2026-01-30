@@ -9,6 +9,7 @@ extends TileMap
 
 const FLOOR_SOURCE = 0
 const WALL_SOURCE = 1
+const STAIRS_SOURCE = 2
 const ATLAS_COORDS = Vector2i(0, 0)
 
 var rooms: Array[Rect2i] = []
@@ -36,6 +37,7 @@ func generate_dungeon():
 			rooms.append(room)
 	
 	place_walls_around_floors()
+	place_stairs()
 	
 	print("Generated dungeon with ", rooms.size(), " rooms")
 
@@ -107,6 +109,13 @@ func get_spawn_position() -> Vector2:
 		var center = get_room_center(first_room)
 		return map_to_local(center)
 	return Vector2.ZERO
+
+func place_stairs():
+	if rooms.size() > 0:
+		var last_room = rooms[-1]
+		var stairs_pos = get_room_center(last_room)
+		set_cell(0, stairs_pos, STAIRS_SOURCE, ATLAS_COORDS)
+		print("Placed stairs at: ", stairs_pos)
 
 func regenerate():
 	generate_dungeon()
