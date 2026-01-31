@@ -143,6 +143,11 @@ func get_wall_type_for_position(pos: Vector2i) -> int:
 	var south_floor = get_cell_source_id(0, Vector2i(pos.x, pos.y - 1)) == FLOOR_SOURCE
 	var east_floor = get_cell_source_id(0, Vector2i(pos.x + 1, pos.y)) == FLOOR_SOURCE
 	var west_floor = get_cell_source_id(0, Vector2i(pos.x - 1, pos.y)) == FLOOR_SOURCE
+
+	# count of adjacent floor tiles
+	var adjacent_floors = int(north_floor) + int(south_floor) + int(east_floor) + int(west_floor)
+	if adjacent_floors >= 3:
+		return FLOOR_SOURCE
 	
 	# Check for corners (floor on two adjacent diagonal sides)
 	var ne_floor = north_floor and east_floor
