@@ -29,7 +29,7 @@ stretch_mode = 5
 
 [node name="NextMask" type="TextureRect" parent="CarouselContainer"]
 layout_mode = 0
-offset_left = 130.0
+offset_left = 135.0
 offset_top = 25.0
 offset_right = 170.0
 offset_bottom = 65.0
@@ -45,3 +45,4 @@ offset_right = 120.0
 offset_bottom = 70.0
 expand_mode = 1
 stretch_mode = 5
+scale = Vector2(1.2, 1.2)

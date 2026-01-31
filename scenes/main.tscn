@@ -2,15 +2,15 @@
 
 [ext_resource type="Texture2D" uid="uid://dpqgg2x88cm7h" path="res://assets/floor.png" id="1_o6xl0"]
 [ext_resource type="PackedScene" uid="uid://bylwq0ey4uygd" path="res://scenes/ui/minimap.tscn" id="1_tefeu"]
-[ext_resource type="PackedScene" uid="uid://bv8gx3r4k5lna" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
+[ext_resource type="PackedScene" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
 [ext_resource type="Texture2D" uid="uid://b0mpuy4m3yxgp" path="res://assets/stairs.jpg" id="3_fws66"]
 [ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/character_body_2d.gd" id="3_j7wrs"]
 [ext_resource type="Texture2D" uid="uid://0rcyg17w1i88" path="res://assets/wall-n.png" id="4_wall_n"]
 [ext_resource type="Texture2D" uid="uid://bu510rq3khy0q" path="res://assets/main_character.png" id="5_04qyp"]
 [ext_resource type="Script" uid="uid://c7qk5anmpq1im" path="res://scripts/dungeon_generator.gd" id="5_o6xl0"]
 [ext_resource type="Texture2D" uid="uid://b1nxaceg67pkb" path="res://assets/wall-s.png" id="5_wall_s"]
-[ext_resource type="PackedScene" path="res://scenes/boss_room.tscn" id="6_tefeu"]
+[ext_resource type="PackedScene" uid="uid://c4n8f8uk1m84t" path="res://scenes/boss_room.tscn" id="6_tefeu"]
 [ext_resource type="Texture2D" uid="uid://bqjw0titvxwbt" path="res://assets/wall-e.png" id="6_wall_e"]
 [ext_resource type="Texture2D" uid="uid://5wk2217drca7" path="res://assets/wall-w.png" id="7_wall_w"]
 [ext_resource type="Texture2D" uid="uid://clc2l7mydwmgc" path="res://assets/wall-corner-ne.png" id="8_wall_ne"]
@@ -102,7 +102,7 @@ theme_override_constants/margin_bottom = 10
 [node name="Minimap" parent="UI/MarginContainer" unique_id=976864793 instance=ExtResource("1_tefeu")]
 layout_mode = 2
 
-[node name="MaskInventory" parent="UI" instance=ExtResource("2_mask_inv")]
+[node name="MaskInventory" parent="UI" unique_id=1103877401 instance=ExtResource("2_mask_inv")]
 
 [node name="TileMap" type="TileMap" parent="." unique_id=1103315701 groups=["tilemap"]]
 light_mask = 12
@@ -121,6 +121,11 @@ script = ExtResource("3_j7wrs")
 [node name="Sprite2D" type="Sprite2D" parent="Player" unique_id=1880422211]
 texture = ExtResource("5_04qyp")
 
+[node name="MaskSprite" type="Sprite2D" parent="Player" unique_id=675138313]
+z_index = 1
+position = Vector2(-1.9999998, -8)
+scale = Vector2(0.4, 0.4)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=1265427240]
 position = Vector2(0, 4)
 shape = SubResource("CircleShape2D_4vge2")
@@ -132,4 +137,5 @@ rotation_smoothing_enabled = true
 
 [node name="BossRoom" parent="." unique_id=261575104 instance=ExtResource("6_tefeu")]
 
+[connection signal="mask_changed" from="UI/MaskInventory" to="Player" method="_on_mask_changed"]
 [connection signal="dungeon_generated" from="TileMap" to="UI/MarginContainer/Minimap" method="update_dungeon_data"]

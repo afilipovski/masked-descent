@@ -10,11 +10,16 @@ const STAIRS_SOURCE = 2
 @export var max_health: int = 10
 @export var wall_collision_damage: int = 2
 
+@onready var mask_sprite = $MaskSprite
+
 var health: int
 var fire_timer = 0.0 # Time elapsed since last shot
 
 var knockback_velocity: Vector2 = Vector2.ZERO
 var knockback_friction: float = 800.0
+
+# Mask textures
+var mask_textures = []
 
 signal health_changed(new_health: int)
 signal player_died
@@ -22,6 +27,17 @@ signal player_died
 func _ready() -> void:
 	add_to_group(Groups.PLAYER)
 	reset_position()
+	
+	# Load mask textures
+	mask_textures = [
+		load("res://assets/mask_1.png"),
+		load("res://assets/mask_2.png"),
+		load("res://assets/mask_3.png")
+	]
+	
+	# Set initial mask
+	if mask_textures.size() > 0:
+		mask_sprite.texture = mask_textures[0]
 
 
 func reset_position() -> void:
@@ -151,3 +167,9 @@ func _check_wall_collision_damage():
 
 func apply_knockback(force: Vector2):
 	knockback_velocity = force
+
+
+func _on_mask_changed(mask_index: int):
+	if mask_index >= 0 and mask_index < mask_textures.size():
+		mask_sprite.texture = mask_textures[mask_index]
+		print("Player mask changed to: ", mask_index)
