@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://bylwq0ey4uygd" path="res://scenes/ui/minimap.tscn" id="1_tefeu"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
 [ext_resource type="PackedScene" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
+[ext_resource type="FontFile" path="res://assets/DungeonFont.ttf" id="2_dungeon_font"]
+[ext_resource type="Script" path="res://scripts/dungeon_level_ui.gd" id="2_level_ui"]
 [ext_resource type="Texture2D" uid="uid://b0mpuy4m3yxgp" path="res://assets/stairs.jpg" id="3_fws66"]
 [ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/character_body_2d.gd" id="3_j7wrs"]
 [ext_resource type="Texture2D" uid="uid://0rcyg17w1i88" path="res://assets/wall-n.png" id="4_wall_n"]
@@ -103,6 +105,17 @@ theme_override_constants/margin_bottom = 10
 layout_mode = 2
 
 [node name="MaskInventory" parent="UI" unique_id=1103877401 instance=ExtResource("2_mask_inv")]
+
+[node name="DungeonLevelLabel" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 150.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_dungeon_font")
+theme_override_font_sizes/font_size = 24
+text = "Level 1"
+script = ExtResource("2_level_ui")
 
 [node name="TileMap" type="TileMap" parent="." unique_id=1103315701 groups=["tilemap"]]
 light_mask = 12
