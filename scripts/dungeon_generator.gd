@@ -12,8 +12,14 @@ extends TileMap
 @export var enemies_per_room_area: float = 0.02
 
 const FLOOR_SOURCE = 0
-const WALL_SOURCE = 1
+const WALL_SOURCE = 1 # wall-test (fallback)
 const STAIRS_SOURCE = 2
+const WALL_N_SOURCE = 3
+const WALL_S_SOURCE = 4
+const WALL_E_SOURCE = 5
+const WALL_W_SOURCE = 6
+const WALL_NE_SOURCE = 7
+const WALL_NW_SOURCE = 8
 const ATLAS_COORDS = Vector2i(0, 0)
 
 const ENEMY_SCENE = preload("res://scenes/enemies/dwarf.tscn")
@@ -49,8 +55,8 @@ func generate_dungeon():
 	print("Generated dungeon with ", rooms.size(), " rooms")
 
 func fill_with_walls():
-	for x in range(-map_width/2, map_width/2):
-		for y in range(-map_height/2, map_height/2):
+	for x in range(-map_width / 2, map_width / 2):
+		for y in range(-map_height / 2, map_height / 2):
 			set_cell(0, Vector2i(x, y), WALL_SOURCE, ATLAS_COORDS)
 
 func create_random_room() -> Rect2i:
@@ -59,8 +65,8 @@ func create_random_room() -> Rect2i:
 	# Ensure room is not square by regenerating if w == h
 	while w == h:
 		h = randi_range(room_min_height, room_max_height)
-	var x = randi_range(-map_width/2 + 1, map_width/2 - w - 1)
-	var y = randi_range(-map_height/2 + 1, map_height/2 - h - 1)
+	var x = randi_range(-map_width / 2 + 1, map_width / 2 - w - 1)
+	var y = randi_range(-map_height / 2 + 1, map_height / 2 - h - 1)
 	return Rect2i(x, y, w, h)
 
 func can_place_room(room: Rect2i) -> bool:
@@ -116,7 +122,47 @@ func place_walls_around_floors():
 	for pos in wall_positions:
 		var check_pos = Vector2i(pos)
 		if get_cell_source_id(0, check_pos) != FLOOR_SOURCE:
-			set_cell(0, check_pos, WALL_SOURCE, ATLAS_COORDS)
+			var wall_type = get_wall_type_for_position(check_pos)
+			set_cell(0, check_pos, wall_type, ATLAS_COORDS)
+
+func get_wall_type_for_position(pos: Vector2i) -> int:
+	# Check which directions have floor tiles
+	var north_floor = get_cell_source_id(0, Vector2i(pos.x, pos.y + 1)) == FLOOR_SOURCE
+	var south_floor = get_cell_source_id(0, Vector2i(pos.x, pos.y - 1)) == FLOOR_SOURCE
+	var east_floor = get_cell_source_id(0, Vector2i(pos.x + 1, pos.y)) == FLOOR_SOURCE
+	var west_floor = get_cell_source_id(0, Vector2i(pos.x - 1, pos.y)) == FLOOR_SOURCE
+	
+	# Check for corners (floor on two adjacent diagonal sides)
+	var ne_floor = north_floor and east_floor
+	var nw_floor = north_floor and west_floor
+	var se_floor = south_floor and east_floor
+	var sw_floor = south_floor and west_floor
+
+	if north_floor and east_floor and west_floor and not south_floor:
+		return FLOOR_SOURCE
+	
+	# Corners take priority
+	if ne_floor and not south_floor and not west_floor:
+		return WALL_S_SOURCE
+	if nw_floor and not south_floor and not east_floor:
+		return WALL_S_SOURCE
+	if se_floor and not north_floor and not west_floor:
+		return WALL_NE_SOURCE
+	if sw_floor and not north_floor and not east_floor:
+		return WALL_NW_SOURCE
+	
+	# Then cardinal directions
+	if south_floor and not north_floor:
+		return WALL_N_SOURCE
+	if north_floor:
+		return WALL_S_SOURCE
+	if west_floor and not east_floor:
+		return WALL_W_SOURCE
+	if east_floor and not west_floor:
+		return WALL_E_SOURCE
+	
+	# Default fallback
+	return WALL_SOURCE
 
 func get_spawn_position() -> Vector2:
 	if rooms.size() > 0:
