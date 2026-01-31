@@ -271,9 +271,19 @@ func spawn_enemies() -> int:
 	return enemies_spawned
 
 func get_random_position_in_room(room: Rect2i) -> Vector2i:
-	var x = randi_range(room.position.x + 1, room.position.x + room.size.x - 2)
-	var y = randi_range(room.position.y + 1, room.position.y + room.size.y - 2)
-	return Vector2i(x, y)
+	# Collect all floor tiles in the room
+	var floor_tiles: Array[Vector2i] = []
+	for x in range(room.position.x, room.position.x + room.size.x):
+		for y in range(room.position.y, room.position.y + room.size.y):
+			var pos = Vector2i(x, y)
+			if get_cell_source_id(0, pos) == FLOOR_SOURCE:
+				floor_tiles.append(pos)
+	
+	# Return random floor tile, or fallback to room center if no floor found
+	if floor_tiles.size() > 0:
+		return floor_tiles[randi() % floor_tiles.size()]
+	else:
+		return get_room_center(room)
 
 func clear_existing_enemies():
 	var enemies = get_tree().get_nodes_in_group("enemies")
