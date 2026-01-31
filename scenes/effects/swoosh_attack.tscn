@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dlnsqouc8xk2q"]
 
 [ext_resource type="Texture2D" uid="uid://xl2mqy07k10h" path="res://assets/swoosh.png" id="1_t4mlk"]
-[ext_resource type="Script" uid="uid://bm3hlk1nxp57b" path="res://scripts/swoosh_attack.gd" id="1_ufuca"]
+[ext_resource type="Script" uid="uid://bm3hlk1nxp57b" path="res://scripts/effects/swoosh_attack.gd" id="1_ufuca"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ufuca"]
 atlas = ExtResource("1_t4mlk")

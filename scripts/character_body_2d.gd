@@ -25,6 +25,7 @@ var knockback_friction: float = 800.0
 var mask_textures = []
 @onready var combat_manager: CombatManager = CombatManager.new()
 @onready var sprite: Sprite2D = $Sprite2D
+var movement_locked: bool = false
 
 signal health_changed(new_health: int)
 signal player_died
@@ -60,6 +61,12 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed(Inputs.CYCLE_MASK):
 		combat_manager.cycle_mask()
 		combat_manager.activate_mobility()
+
+	# Don't allow movement if locked (e.g., during UI interactions)
+	if movement_locked:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 
 	var direction := Input.get_vector(
 		Inputs.MOVE_LEFT,
@@ -112,6 +119,11 @@ func _physics_process(delta: float) -> void:
 			Masks.Type.MOBILITY:
 				pass
 
+	# Check for interact input
+	if Input.is_action_just_pressed(Inputs.INTERACT):
+		_handle_interact_input()
+
+
 func _handle_knockback(delta: float) -> bool:
 	if knockback_velocity.length() > 0:
 		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
@@ -152,7 +164,7 @@ func _check_door_collision() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
 	if not tilemap or not tilemap.has_method("is_door_position"):
 		return
-	
+
 	var tile_pos = tilemap.local_to_map(position)
 	if tilemap.is_door_position(tile_pos):
 		# Push player back from door
@@ -213,3 +225,24 @@ func spawn_melee_hitbox(direction: Vector2) -> void:
 	var offset = direction.normalized() * 20
 	hitbox.global_position = global_position + offset
 	hitbox.rotation = direction.angle()
+
+func lock_movement():
+	movement_locked = true
+
+func unlock_movement():
+	movement_locked = false
+
+func _handle_interact_input():
+	print("Player pressed interact key!")
+	# Find nearby interactables
+	var interactables = get_tree().get_nodes_in_group("interactables")
+	for interactable in interactables:
+		if interactable.has_method("_is_player_near") and interactable._is_player_near():
+			print("Found nearby interactable: ", interactable.name)
+			if interactable.has_method("open_chest"):
+				if not interactable.is_opened:
+					print("Opening chest...")
+					interactable.open_chest()
+				else:
+					print("Chest is already opened")
+			break

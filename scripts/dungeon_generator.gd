@@ -24,14 +24,18 @@ const DOOR_SOURCE = 9
 const ATLAS_COORDS = Vector2i(0, 0)
 
 const ENEMY_SCENE = preload("res://scenes/enemies/dwarf.tscn")
+const CHEST_SCENE = preload("res://scenes/interactables/treasure_chest.tscn")
+# Alternative: Load at runtime to debug
+# var CHEST_SCENE = load("res://scenes/interactables/treasure_chest.tscn")
 
 var rooms: Array[Rect2i] = []
 var room_connections: Array[Vector2i] = []
 var door_position: Vector2i = Vector2i.ZERO
 var total_enemies: int = 0
 var door_open: bool = false
+var chest_position: Vector2i = Vector2i.ZERO
 
-signal dungeon_generated(rooms_data: Array[Rect2i], stairs_position: Vector2i, connections: Array[Vector2i])
+signal dungeon_generated(rooms_data: Array[Rect2i], stairs_position: Vector2i, connections: Array[Vector2i], chest_pos: Vector2i)
 signal door_opened()
 
 func _ready():
@@ -43,6 +47,7 @@ func generate_dungeon():
 	room_connections.clear()
 	door_open = false
 	total_enemies = 0
+	chest_position = Vector2i.ZERO
 
 	fill_with_walls()
 
@@ -70,13 +75,9 @@ func generate_dungeon():
 
 	place_door()
 	total_enemies = spawn_enemies()
+	# Spawn chest after everything else is set up
+	call_deferred("spawn_chest_and_emit_signal")
 
-
-	var stairs_pos = Vector2i.ZERO
-	if rooms.size() > 0:
-		stairs_pos = get_room_center(rooms[-1])
-
-	dungeon_generated.emit(rooms, stairs_pos, room_connections)
 	print("Generated dungeon with ", rooms.size(), " rooms and ", total_enemies, " enemies")
 
 func fill_with_walls():
@@ -280,6 +281,77 @@ func clear_existing_enemies():
 	for enemy in enemies:
 		enemy.queue_free()
 
+func spawn_chest_and_emit_signal():
+	spawn_chest()
+
+	# Emit signal after chest is spawned
+	var stairs_pos = Vector2i.ZERO
+	if rooms.size() > 0:
+		stairs_pos = get_room_center(rooms[-1])
+
+	print("Emitting dungeon_generated signal with chest_position: ", chest_position)
+	dungeon_generated.emit(rooms, stairs_pos, room_connections, chest_position)
+
+func spawn_chest():
+	clear_existing_chests()
+
+	# Skip first room (player spawn) and last room (stairs)
+	# Randomly pick one room from the middle rooms to spawn a chest
+	if rooms.size() > 2:
+		var available_rooms = range(1, rooms.size() - 1) # Exclude first and last
+		var chest_room_index = available_rooms[randi() % available_rooms.size()]
+		var chest_room = rooms[chest_room_index]
+
+		# Find a good position in the room (not center, but not edge)
+		var spawn_pos = get_random_position_in_room(chest_room)
+		chest_position = spawn_pos
+
+		print("Attempting to spawn chest at tile position: ", spawn_pos)
+
+		if CHEST_SCENE == null:
+			print("ERROR: CHEST_SCENE is null!")
+			return
+
+		var chest_instance = CHEST_SCENE.instantiate()
+		if chest_instance == null:
+			print("ERROR: Failed to instantiate chest!")
+			return
+
+		var world_pos = map_to_local(spawn_pos)
+		print("World position calculated: ", world_pos)
+
+		chest_instance.position = world_pos # Use position instead of global_position
+		chest_instance.name = "GeneratedChest"
+
+		var parent = get_parent()
+		if parent == null:
+			print("ERROR: No parent found!")
+			return
+
+		parent.add_child(chest_instance)
+		print("Successfully spawned chest in room ", chest_room_index, " at tile position: ", spawn_pos)
+		print("Chest added to parent: ", parent.name)
+
+		# Verify the chest was added
+		await get_tree().process_frame
+		var found_chest = parent.get_node_or_null("GeneratedChest")
+		if found_chest:
+			print("Chest verified in scene tree at position: ", found_chest.position)
+		else:
+			print("ERROR: Chest not found in scene tree after adding!")
+	else:
+		print("Not enough rooms to spawn a chest")
+		chest_position = Vector2i.ZERO # Set to zero if no chest spawned
+
+func clear_existing_chests():
+	var chests = get_tree().get_nodes_in_group("interactables")
+	print("Clearing existing chests. Found ", chests.size(), " interactables")
+	for chest in chests:
+		print("Checking interactable: ", chest.name, ", script: ", chest.get_script())
+		if chest.get_script() and chest.get_script().get_global_name() == "TreasureChest":
+			print("Removing chest: ", chest.name)
+			chest.queue_free()
+
 func regenerate():
 	generate_dungeon()
 	get_tree().call_group(Groups.PLAYER, "reset_position")
@@ -287,20 +359,20 @@ func regenerate():
 func _on_enemy_died():
 	if door_open:
 		return
-	
+
 	var enemies_alive = get_tree().get_nodes_in_group(Groups.ENEMY).size()
 	var enemies_killed = total_enemies - enemies_alive
 	var kill_percentage = float(enemies_killed) / float(total_enemies) if total_enemies > 0 else 0.0
-	
+
 	print("Enemies killed: ", enemies_killed, "/", total_enemies, " (", int(kill_percentage * 100), "%)")
-	
+
 	if kill_percentage >= 0.30:
 		open_door()
 
 func open_door():
 	if door_open:
 		return
-	
+
 	door_open = true
 	# Replace door with stairs
 	set_cell(0, door_position, STAIRS_SOURCE, ATLAS_COORDS)
