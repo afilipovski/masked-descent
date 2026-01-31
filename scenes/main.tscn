@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://b7a76f07gyul1"]
 
 [ext_resource type="Texture2D" uid="uid://dpqgg2x88cm7h" path="res://assets/floor.png" id="1_o6xl0"]
-[ext_resource type="Script" uid="uid://c7qk5anmpq1im" path="res://scripts/dungeon_generator.gd" id="1_tefeu"]
 [ext_resource type="PackedScene" uid="uid://bylwq0ey4uygd" path="res://scenes/ui/minimap.tscn" id="1_tefeu"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
 [ext_resource type="Texture2D" uid="uid://b0mpuy4m3yxgp" path="res://assets/stairs.jpg" id="3_fws66"]
