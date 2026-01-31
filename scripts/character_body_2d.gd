@@ -1,6 +1,8 @@
 extends CharacterBody2D
 
 const PROJECTILE_SPELL = preload("uid://cvhml3bqscuh2")
+const MELEE_HITBOX = preload("uid://bpgefom8c5e3c")
+
 
 const SPEED = 200.0
 const SPRINT_MULTIPLIER = 1.8
@@ -20,37 +22,42 @@ var knockback_friction: float = 800.0
 
 # Mask textures
 var mask_textures = []
+@onready var combat_manager: CombatManager = CombatManager.new()
+@onready var sprite: Sprite2D = $Sprite2D
 
 signal health_changed(new_health: int)
 signal player_died
 
 func _ready() -> void:
 	add_to_group(Groups.PLAYER)
+	add_child(combat_manager)
 	reset_position()
-	
+
 	# Load mask textures
 	mask_textures = [
 		load("res://assets/mask_1.png"),
 		load("res://assets/mask_2.png"),
 		load("res://assets/mask_3.png")
 	]
-	
+
 	# Set initial mask
 	if mask_textures.size() > 0:
 		mask_sprite.texture = mask_textures[0]
-
 
 func reset_position() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
 	if tilemap and tilemap.has_method("get_spawn_position"):
 		position = tilemap.get_spawn_position()
 
-
 func _physics_process(delta: float) -> void:
 	if _handle_knockback(delta):
 		move_and_slide()
 		_check_wall_collision_damage()
 		return
+
+	if Input.is_action_just_pressed(Inputs.CYCLE_MASK):
+		combat_manager.cycle_mask()
+		combat_manager.activate_mobility()
 
 	var direction := Input.get_vector(
 		Inputs.MOVE_LEFT,
@@ -63,6 +70,8 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed(Inputs.SPRINT):
 		current_speed *= SPRINT_MULTIPLIER
 
+	current_speed *= combat_manager.get_speed_multiplier()
+
 	if direction != Vector2.ZERO:
 		velocity = direction * current_speed
 	else:
@@ -70,8 +79,12 @@ func _physics_process(delta: float) -> void:
 		velocity.y = move_toward(velocity.y, 0, SPEED)
 
 	move_and_slide()
-
 	check_stairs()
+
+	if sprite:
+		var mod = sprite.modulate
+		mod.a = combat_manager.get_opacity()
+		sprite.modulate = mod
 
 	if fire_timer > 0:
 		fire_timer -= delta
@@ -84,8 +97,17 @@ func _physics_process(delta: float) -> void:
 	)
 
 	if shoot_direction != Vector2.ZERO and fire_timer <= 0:
-		shoot(shoot_direction)
-		fire_timer = FIRE_COOLDOWN
+		combat_manager.perform_attack(self , shoot_direction)
+
+		match combat_manager.current_mask:
+			Masks.Type.RANGED:
+				shoot(shoot_direction)
+				fire_timer = FIRE_COOLDOWN
+			Masks.Type.MELEE:
+				spawn_melee_hitbox(shoot_direction)
+				fire_timer = FIRE_COOLDOWN
+			Masks.Type.MOBILITY:
+				pass
 
 func _handle_knockback(delta: float) -> bool:
 	if knockback_velocity.length() > 0:
@@ -101,11 +123,9 @@ func _handle_knockback(delta: float) -> bool:
 
 func shoot(direction: Vector2) -> void:
 	var projectile = PROJECTILE_SPELL.instantiate()
-
 	get_parent().add_child(projectile)
 
-	# Offset projectile spawn position to prevent immediate collision with player
-	var spawn_offset = direction.normalized() * 20 # 20 pixels away from player center
+	var spawn_offset = direction.normalized() * 20
 	projectile.global_position = global_position + spawn_offset
 
 	if projectile.has_method("set_direction"):
@@ -114,7 +134,6 @@ func shoot(direction: Vector2) -> void:
 		projectile.velocity = direction.normalized()
 	elif "direction" in projectile:
 		projectile.direction = direction.normalized()
-
 
 func check_stairs() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
@@ -125,12 +144,10 @@ func check_stairs() -> void:
 		if tile_source == STAIRS_SOURCE:
 			descend_to_next_level()
 
-
 func descend_to_next_level() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
 	if tilemap and tilemap.has_method("regenerate"):
 		tilemap.regenerate()
-
 
 func take_damage(amount: int):
 	health -= amount
@@ -161,15 +178,21 @@ func _check_wall_collision_damage():
 		take_damage(wall_collision_damage)
 		print("Player hit wall during knockback! Took ", wall_collision_damage, " damage")
 
-		# Reduce knockback on wall hit to prevent sliding
 		knockback_velocity = knockback_velocity * 0.3
 		break
 
 func apply_knockback(force: Vector2):
 	knockback_velocity = force
 
-
 func _on_mask_changed(mask_index: int):
 	if mask_index >= 0 and mask_index < mask_textures.size():
 		mask_sprite.texture = mask_textures[mask_index]
 		print("Player mask changed to: ", mask_index)
+
+func spawn_melee_hitbox(direction: Vector2) -> void:
+	var hitbox = MELEE_HITBOX.instantiate()
+	get_parent().add_child(hitbox)
+
+	var offset = direction.normalized() * 20
+	hitbox.global_position = global_position + offset
+	hitbox.rotation = direction.angle()
