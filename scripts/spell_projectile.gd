@@ -5,6 +5,7 @@ var speed = 220.0
 var lifetime = 1.2
 var max_distance = 500.0
 var traveled_distance = 0.0
+var damage = 1
 
 func set_direction(new_direction: Vector2) -> void:
 	direction = new_direction.normalized()
@@ -31,6 +32,8 @@ func _physics_process(delta: float) -> void:
 func _on_collision(collision: KinematicCollision2D) -> void:
 	var collider = collision.get_collider()
 
+	if collider.is_in_group(Groups.PLAYER):
+		return
 	if collider.is_in_group(Groups.ENEMY):
 		_damage_enemy(collider)
 	elif collider is TileMap or collider.is_in_group(Groups.WALL):
@@ -39,9 +42,10 @@ func _on_collision(collision: KinematicCollision2D) -> void:
 	_despawn()
 
 
-func _damage_enemy(_enemy: Node) -> void:
-	# Future: call enemy.take_damage(10)
-	pass
+func _damage_enemy(enemy: Node) -> void:
+	if enemy.has_method("take_damage"):
+		enemy.take_damage(1)
+		print("Projectile hit enemy for 1 damage!")
 
 
 func _hit_wall() -> void:

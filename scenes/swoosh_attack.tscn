@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://bmnolqwq03q1k"]
+
+[ext_resource type="Texture2D" uid="uid://c4aufdoyvxkhn" path="res://assets/swoosh.png" id="1_t4mlk"]
+[ext_resource type="Script" uid="uid://b7ft3h446h8gy" path="res://scripts/swoosh_attack.gd" id="1_ufuca"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ufuca"]
+atlas = ExtResource("1_t4mlk")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fj14m"]
+atlas = ExtResource("1_t4mlk")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j1dtb"]
+atlas = ExtResource("1_t4mlk")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a30f6"]
+atlas = ExtResource("1_t4mlk")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xq0yt"]
+atlas = ExtResource("1_t4mlk")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ajhkx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ufuca")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fj14m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j1dtb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a30f6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xq0yt")
+}],
+"loop": false,
+"name": &"swoosh",
+"speed": 17.0
+}]
+
+[node name="SwooshAttack" type="Node2D" unique_id=429362576]
+script = ExtResource("1_ufuca")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=798222364]
+sprite_frames = SubResource("SpriteFrames_ajhkx")
+animation = &"swoosh"

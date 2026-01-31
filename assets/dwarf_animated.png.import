@@ -2,16 +2,12 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b0dysdihj27pd"
-path="res://.godot/imported/dwarf_animated.png-258247df5dd5182c6e3a518a8f69f4fe.ctex"
-metadata={
-"vram_texture": false
-}
+uid="uid://bwynsxtfuy7vk"
+valid=false
 
 [deps]
 
 source_file="res://assets/dwarf_animated.png"
-dest_files=["res://.godot/imported/dwarf_animated.png-258247df5dd5182c6e3a518a8f69f4fe.ctex"]
 
 [params]
 

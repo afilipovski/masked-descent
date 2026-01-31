@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://cs0uiq4hqgsgr"]
 
-[ext_resource type="Script" uid="uid://dd1lh03go07b" path="res://scripts/enemy.gd" id="1_0g8kj"]
-[ext_resource type="Texture2D" uid="uid://b0dysdihj27pd" path="res://assets/dwarf_animated.png" id="2_uspnt"]
+[ext_resource type="Script" uid="uid://dc8s7kgh5o7or" path="res://scripts/enemies/dwarf.gd" id="1_0g8kj"]
+[ext_resource type="Texture2D" uid="uid://b0dysdihj27pd" path="res://assets/enemies/dwarf_animated.png" id="2_uspnt"]
+[ext_resource type="PackedScene" uid="uid://bmnolqwq03q1k" path="res://scenes/swoosh_attack.tscn" id="2_ycnfq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eid3i"]
 atlas = ExtResource("2_uspnt")
@@ -10,6 +11,22 @@ region = Rect2(0, 0, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_ycnfq"]
 atlas = ExtResource("2_uspnt")
 region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_07pof"]
+atlas = ExtResource("2_uspnt")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w8b2k"]
+atlas = ExtResource("2_uspnt")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jgtmn"]
+atlas = ExtResource("2_uspnt")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6d54j"]
+atlas = ExtResource("2_uspnt")
+region = Rect2(32, 32, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_pcix0"]
 animations = [{
@@ -21,8 +38,35 @@ animations = [{
 "texture": SubResource("AtlasTexture_ycnfq")
 }],
 "loop": true,
-"name": &"default",
-"speed": 2.5
+"name": &"walk_down",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_07pof")
+}],
+"loop": true,
+"name": &"walk_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w8b2k")
+}],
+"loop": true,
+"name": &"walk_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jgtmn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6d54j")
+}],
+"loop": true,
+"name": &"walk_up",
+"speed": 3.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_eid3i"]
@@ -32,10 +76,11 @@ radius = 12.0
 
 [node name="Dwarf" type="CharacterBody2D" unique_id=830158451]
 script = ExtResource("1_0g8kj")
+attack_effect_scene = ExtResource("2_ycnfq")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=879989605]
 sprite_frames = SubResource("SpriteFrames_pcix0")
-frame_progress = 0.45231882
+animation = &"walk_left"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=41436332]
 position = Vector2(0, 4)

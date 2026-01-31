@@ -41,7 +41,7 @@ position = Vector2(0, 4)
 shape = SubResource("CircleShape2D_4vge2")
 
 [node name="Camera2D" type="Camera2D" parent="CharacterBody2D" unique_id=1704654455]
-zoom = Vector2(3, 3)
+zoom = Vector2(6, 6)
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 

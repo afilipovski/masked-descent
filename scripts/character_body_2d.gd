@@ -7,8 +7,17 @@ const SPRINT_MULTIPLIER = 1.8
 const FIRE_COOLDOWN = 0.5 # Seconds between shots
 const STAIRS_SOURCE = 2
 
+@export var max_health: int = 10
+@export var wall_collision_damage: int = 2
+
+var health: int
 var fire_timer = 0.0 # Time elapsed since last shot
 
+var knockback_velocity: Vector2 = Vector2.ZERO
+var knockback_friction: float = 800.0
+
+signal health_changed(new_health: int)
+signal player_died
 
 func _ready() -> void:
 	add_to_group(Groups.PLAYER)
@@ -22,6 +31,11 @@ func reset_position() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _handle_knockback(delta):
+		move_and_slide()
+		_check_wall_collision_damage()
+		return
+
 	var direction := Input.get_vector(
 		Inputs.MOVE_LEFT,
 		Inputs.MOVE_RIGHT,
@@ -57,12 +71,26 @@ func _physics_process(delta: float) -> void:
 		shoot(shoot_direction)
 		fire_timer = FIRE_COOLDOWN
 
+func _handle_knockback(delta: float) -> bool:
+	if knockback_velocity.length() > 0:
+		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
+
+	var is_player_knocked_back = knockback_velocity.length() > 50.0
+
+	if is_player_knocked_back:
+		velocity = knockback_velocity
+		return true
+
+	return false
 
 func shoot(direction: Vector2) -> void:
 	var projectile = PROJECTILE_SPELL.instantiate()
 
 	get_parent().add_child(projectile)
-	projectile.global_position = global_position
+
+	# Offset projectile spawn position to prevent immediate collision with player
+	var spawn_offset = direction.normalized() * 20 # 20 pixels away from player center
+	projectile.global_position = global_position + spawn_offset
 
 	if projectile.has_method("set_direction"):
 		projectile.set_direction(direction)
@@ -86,3 +114,40 @@ func descend_to_next_level() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
 	if tilemap and tilemap.has_method("regenerate"):
 		tilemap.regenerate()
+
+
+func take_damage(amount: int):
+	health -= amount
+	health_changed.emit(health)
+	print("Player took damage! Health: ", health)
+
+	if health <= 0:
+		die()
+
+func die():
+	print("Player died!")
+	player_died.emit()
+	health = max_health
+	reset_position()
+
+func _check_wall_collision_damage():
+	for i in get_slide_collision_count():
+		var collision = get_slide_collision(i)
+		var collider = collision.get_collider()
+
+		if collider is not TileMap or !(collider and collider.is_in_group(Groups.WALL)):
+			continue
+
+		var is_knockback_significant = knockback_velocity.length() > 100.0
+		if !is_knockback_significant:
+			continue
+
+		take_damage(wall_collision_damage)
+		print("Player hit wall during knockback! Took ", wall_collision_damage, " damage")
+
+		# Reduce knockback on wall hit to prevent sliding
+		knockback_velocity = knockback_velocity * 0.3
+		break
+
+func apply_knockback(force: Vector2):
+	knockback_velocity = force

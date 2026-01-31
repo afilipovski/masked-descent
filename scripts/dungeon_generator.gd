@@ -57,10 +57,10 @@ func generate_dungeon():
 	# Phase 1: Enforce tile adjacency rules (place generic walls)
 	place_walls_around_floors()
 	remove_thin_walls()
-	
+
 	# Phase 2: Texture walls with appropriate tile types
 	texture_walls()
-	
+
 	place_stairs()
 	spawn_enemies()
 
@@ -149,20 +149,20 @@ func remove_thin_walls():
 	while changed:
 		changed = false
 		var used_cells = get_used_cells(0)
-		
+
 		for cell in used_cells:
 			var source_id = get_cell_source_id(0, cell)
 			if source_id == FLOOR_SOURCE or source_id == STAIRS_SOURCE:
 				continue
-			
+
 			# Check if this wall is surrounded by floor on opposite sides
 			var north = get_cell_source_id(0, Vector2i(cell.x, cell.y - 1))
 			var south = get_cell_source_id(0, Vector2i(cell.x, cell.y + 1))
 			var east = get_cell_source_id(0, Vector2i(cell.x + 1, cell.y))
 			var west = get_cell_source_id(0, Vector2i(cell.x - 1, cell.y))
-			
+
 			var is_floor_or_empty = func(id): return id == FLOOR_SOURCE or id == -1
-			
+
 			# Vertical single-tile wall: floor/empty on both left and right
 			if is_floor_or_empty.call(west) and is_floor_or_empty.call(east):
 				set_cell(0, cell, FLOOR_SOURCE, ATLAS_COORDS)
@@ -193,7 +193,7 @@ func get_wall_type_for_position(pos: Vector2i) -> int:
 	var adjacent_floors = int(north_floor) + int(south_floor) + int(east_floor) + int(west_floor)
 	if adjacent_floors >= 3:
 		return FLOOR_SOURCE
-	
+
 	# Check for corners (floor on two adjacent diagonal sides)
 	var ne_floor = north_floor and east_floor
 	var nw_floor = north_floor and west_floor
@@ -202,7 +202,7 @@ func get_wall_type_for_position(pos: Vector2i) -> int:
 
 	if north_floor and east_floor and west_floor and not south_floor:
 		return FLOOR_SOURCE
-	
+
 	# Corners take priority
 	if ne_floor and not south_floor and not west_floor:
 		return WALL_S_SOURCE
@@ -212,7 +212,7 @@ func get_wall_type_for_position(pos: Vector2i) -> int:
 		return WALL_NE_SOURCE
 	if sw_floor and not north_floor and not east_floor:
 		return WALL_NW_SOURCE
-	
+
 	# Then cardinal directions
 	if south_floor and not north_floor:
 		return WALL_N_SOURCE
@@ -222,7 +222,7 @@ func get_wall_type_for_position(pos: Vector2i) -> int:
 		return WALL_W_SOURCE
 	if east_floor and not west_floor:
 		return WALL_E_SOURCE
-	
+
 	# Default fallback
 	return WALL_SOURCE
 
