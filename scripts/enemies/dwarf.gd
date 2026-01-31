@@ -63,6 +63,7 @@ func deal_damage_to_player(player_body: Node2D):
 	_play_attack_effect(player_body)
 	if !player_body.has_method("take_damage"):
 		return
+
 	player_body.take_damage(damage)
 
 	if !player_body.has_method("apply_knockback"):

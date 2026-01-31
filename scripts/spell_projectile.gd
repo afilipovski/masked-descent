@@ -5,7 +5,7 @@ var speed = 220.0
 var lifetime = 1.2
 var max_distance = 500.0
 var traveled_distance = 0.0
-var damage = 1
+var damage = 10
 
 func set_direction(new_direction: Vector2) -> void:
 	direction = new_direction.normalized()
@@ -44,7 +44,7 @@ func _on_collision(collision: KinematicCollision2D) -> void:
 
 func _damage_enemy(enemy: Node) -> void:
 	if enemy.has_method("take_damage"):
-		enemy.take_damage(1)
+		enemy.take_damage(damage)
 		print("Projectile hit enemy for 1 damage!")
 
 
