@@ -7,6 +7,10 @@ extends Area2D
 var acceleration: Vector2 = Vector2.ZERO
 var velocity: Vector2 = Vector2.ZERO
 
+func _ready() -> void:
+	# Detect player (layer 8) and walls/tiles (layer 1).
+	collision_mask = 1 | 8
+
 func _physics_process(delta):
 	if player == null:
 		return
@@ -17,6 +21,9 @@ func _physics_process(delta):
 	rotation = velocity.angle()
 	velocity = velocity.limit_length(150)
 	global_position += velocity * delta
+
+ # Replace with function body.
+
 
 func _on_body_entered(body: Node2D) -> void:
 	queue_free() # Replace with function body.

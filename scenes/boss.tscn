@@ -330,7 +330,8 @@ vframes = 10
 [node name="Pivot" type="Node2D" parent="boss" unique_id=1863181482]
 
 [node name="Sprite2D" type="Sprite2D" parent="boss/Pivot" unique_id=449792569]
-position = Vector2(98, 0)
+position = Vector2(134, 25)
+scale = Vector2(1.2033334, 1)
 texture = ExtResource("2_jncid")
 vframes = 15
 frame = 1

@@ -21,7 +21,8 @@ func transition():
 
 	var distance = character.direction.length()
 
-	if distance < 30:
+	print(distance)
+	if distance < 50:
 		get_parent().change_state("MeleeAttack")
 	elif distance > 130:
 		var chance = randi() % 2
