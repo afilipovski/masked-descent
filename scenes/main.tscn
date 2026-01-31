@@ -243,6 +243,9 @@ rotation_smoothing_enabled = true
 
 [node name="Node2D" type="Node2D" parent="." unique_id=407149965]
 
+[node name="BossRoom2" parent="." unique_id=912229205 instance=ExtResource("6_tefeu")]
+position = Vector2(-67, 13)
+
 [connection signal="mask_changed" from="UI/MaskInventory" to="Player" method="_on_mask_changed"]
 [connection signal="dungeon_generated" from="TileMap" to="UI/MarginContainer/Minimap" method="update_dungeon_data"]
 [connection signal="player_died" from="Player" to="UI/GameOverScreen" method="show_game_over"]

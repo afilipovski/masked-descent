@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://cs0uiq4hqgsgr"]
 
 [ext_resource type="Script" uid="uid://pjyhvkbqbarx" path="res://scripts/enemies/dwarf.gd" id="1_0g8kj"]
-[ext_resource type="Texture2D" uid="uid://s4ct1loxnuau" path="res://assets/enemies/dwarf_animated.png" id="2_uspnt"]
-[ext_resource type="PackedScene" uid="uid://bmnolqwq03q1k" path="res://scenes/swoosh_attack.tscn" id="2_ycnfq"]
+[ext_resource type="PackedScene" path="res://scenes/effects/swoosh_attack.tscn" id="2_jgtmn"]
+[ext_resource type="Texture2D" uid="uid://bia71o7pjfmc" path="res://assets/enemies/dwarf_animated.png" id="2_uspnt"]
 [ext_resource type="PackedScene" uid="uid://p7pbv3l0n55" path="res://scenes/death_effect.tscn" id="3_jgtmn"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eid3i"]
@@ -79,7 +79,7 @@ radius = 12.0
 collision_layer = 141
 collision_mask = 141
 script = ExtResource("1_0g8kj")
-attack_effect_scene = ExtResource("2_ycnfq")
+attack_effect_scene = ExtResource("2_jgtmn")
 death_effect_scene = ExtResource("3_jgtmn")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=879989605]

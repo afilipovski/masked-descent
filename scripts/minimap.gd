@@ -9,6 +9,7 @@ class_name Minimap
 @export var current_room_color = Color(0.8, 0.8, 0.8)
 @export var corridor_color = Color(0.6, 0.6, 0.6)
 @export var player_color = Color(0, 1, 1)
+@export var chest_color = Color(1, 0.8, 0.2)
 
 var minimap_size = Vector2(150, 150)
 
@@ -17,6 +18,7 @@ var room_connections: Array[Vector2i] = []
 var map_bounds = Rect2i()
 var stairs_position = Vector2i.ZERO
 var door_open: bool = false
+var chest_position = Vector2i.ZERO
 var current_room_index = -1
 var player: Node2D = null
 var tilemap: TileMap = null
@@ -30,7 +32,7 @@ func _ready():
 	await get_tree().process_frame
 	player = get_tree().get_first_node_in_group(Groups.PLAYER)
 	tilemap = get_tree().get_first_node_in_group(Groups.TILEMAP)
-	
+
 	# Connect to door opened signal
 	if tilemap and tilemap.has_signal("door_opened"):
 		tilemap.door_opened.connect(_on_door_opened)
@@ -54,6 +56,7 @@ func _draw():
 	_draw_corridors()
 	_draw_rooms()
 	_draw_stairs()
+	_draw_chest()
 	_draw_player()
 
 func _process(_delta):
@@ -72,10 +75,18 @@ func update_current_room() -> void:
 func update_dungeon_data(
 	new_rooms: Array[Rect2i],
 	new_stairs_position: Vector2i,
-	connections: Array[Vector2i]
+	connections: Array[Vector2i],
+	new_chest_position: Vector2i = Vector2i.ZERO
 ) -> void:
+	print("Minimap received dungeon data:")
+	print("  Rooms: ", new_rooms.size())
+	print("  Stairs position: ", new_stairs_position)
+	print("  Chest position: ", new_chest_position)
+	print("  Connections: ", connections.size())
+
 	rooms = new_rooms
 	stairs_position = new_stairs_position
+	chest_position = new_chest_position
 	room_connections = connections
 	door_open = false
 	calculate_map_bounds()
@@ -162,6 +173,25 @@ func _draw_stairs():
 func _on_door_opened():
 	door_open = true
 	queue_redraw()
+
+func _draw_chest():
+	print("_draw_chest called with chest_position: ", chest_position)
+	if chest_position == Vector2i.ZERO:
+		print("Chest position is zero, not drawing")
+		return
+
+	var chest_minimap_pos = dungeon_to_minimap(Vector2(chest_position))
+	print("Chest minimap position: ", chest_minimap_pos)
+
+	# Draw chest as a square
+	var chest_size = 6.0 # Made it bigger for visibility
+	var chest_rect = Rect2(
+		chest_minimap_pos - Vector2(chest_size / 2, chest_size / 2),
+		Vector2(chest_size, chest_size)
+	)
+	draw_rect(chest_rect, chest_color, true)
+	draw_rect(chest_rect, Color.BLACK, false, 1.0) # Border
+	print("Drew chest rectangle at: ", chest_rect)
 
 func _draw_player():
 	if not player or not tilemap:
