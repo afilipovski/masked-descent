@@ -36,6 +36,8 @@ func _ready() -> void:
 	health = max_health
 	reset_position()
 
+	combat_manager.mask_changed.connect(_on_combat_mask_changed)
+
 	# Load mask textures
 	mask_textures = [
 		load("res://assets/mask_1.png"),
@@ -213,11 +215,6 @@ func _check_wall_collision_damage():
 func apply_knockback(force: Vector2):
 	knockback_velocity = force
 
-func _on_mask_changed(mask_index: int):
-	if mask_index >= 0 and mask_index < mask_textures.size():
-		mask_sprite.texture = mask_textures[mask_index]
-		print("Player mask changed to: ", mask_index)
-
 func spawn_melee_hitbox(direction: Vector2) -> void:
 	var hitbox = MELEE_HITBOX.instantiate()
 	get_parent().add_child(hitbox)
@@ -246,3 +243,14 @@ func _handle_interact_input():
 				else:
 					print("Chest is already opened")
 			break
+
+func _on_combat_mask_changed(mask_type: Masks.Type):
+	var mask_index = mask_type as int
+	if mask_index >= 0 and mask_index < mask_textures.size():
+		mask_sprite.texture = mask_textures[mask_index]
+
+	var mask_ui = get_parent().get_node_or_null("UI/MaskInventory")
+	if mask_ui and mask_ui.has_method("update_display"):
+		mask_ui.update_display(mask_type)
+
+	print("Player mask changed to: ", Masks.get_mask_name(mask_type))
