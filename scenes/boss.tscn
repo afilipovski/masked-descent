@@ -1,7 +1,22 @@
 [gd_scene format=3 uid="uid://dsntk08imjg58"]
 
+[ext_resource type="Script" uid="uid://dhn880l0gnged" path="res://scenes/boss.gd" id="1_2cdgk"]
 [ext_resource type="Texture2D" uid="uid://ckhwv5fufnmjs" path="res://assets/Mecha-stone Golem 0.1/PNG sheet/Character_sheet.png" id="1_neq0i"]
 [ext_resource type="Texture2D" uid="uid://dtbddus22il2t" path="res://assets/Mecha-stone Golem 0.1/weapon PNG/Laser_sheet.png" id="2_jncid"]
+[ext_resource type="Script" uid="uid://ddh8uetrmb73i" path="res://scenes/finite_state_machine.gd" id="3_qnbj4"]
+[ext_resource type="Script" uid="uid://bwf01upd1qvob" path="res://scenes/idle.gd" id="4_wqpjq"]
+[ext_resource type="Script" uid="uid://c8g6b6wrxxp7q" path="res://scenes/follow.gd" id="6_qsl3t"]
+[ext_resource type="Script" uid="uid://d3r5a4hxhbf7k" path="res://scenes/melee_attack.gd" id="7_5m4cx"]
+[ext_resource type="Script" uid="uid://bp7lxxwr0p8mo" path="res://scenes/homing_missile.gd" id="8_0onds"]
+[ext_resource type="Script" uid="uid://b5waicura4l7e" path="res://scenes/laser_beam.gd" id="8_5f346"]
+[ext_resource type="Script" uid="uid://cy5okpj1jx6i0" path="res://scenes/armor_buff.gd" id="9_0onds"]
+[ext_resource type="PackedScene" uid="uid://beenxo0abgyb0" path="res://scenes/bullet.tscn" id="9_8eiau"]
+[ext_resource type="Script" uid="uid://b3kadavdj8333" path="res://scenes/dash.gd" id="11_lfs1x"]
+[ext_resource type="Script" uid="uid://crgqael0eeyqh" path="res://scenes/death.gd" id="12_lfs1x"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_neq0i"]
+radius = 23.0
+height = 46.0
 
 [sub_resource type="Animation" id="Animation_qnbj4"]
 length = 0.001
@@ -46,6 +61,18 @@ tracks/0/keys = {
 "update": 1,
 "values": [60, 61, 62, 63, 64, 65, 66, 67, 68, 69]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/Sprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
 
 [sub_resource type="Animation" id="Animation_wqpjq"]
 resource_name = "block"
@@ -61,6 +88,18 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [30, 31, 32, 33, 34, 35, 36, 37]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/Sprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
 }
 
 [sub_resource type="Animation" id="Animation_2cdgk"]
@@ -79,6 +118,18 @@ tracks/0/keys = {
 "update": 1,
 "values": [70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/Sprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
 
 [sub_resource type="Animation" id="Animation_qsl3t"]
 resource_name = "glowing"
@@ -94,6 +145,18 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [10, 11, 12, 13, 14, 15, 16, 17]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/Sprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
 }
 
 [sub_resource type="Animation" id="Animation_2avx2"]
@@ -113,6 +176,18 @@ tracks/0/keys = {
 "update": 1,
 "values": [0, 1, 2, 3, 3]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/Sprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
 
 [sub_resource type="Animation" id="Animation_5f346"]
 resource_name = "laser"
@@ -128,7 +203,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1, 1.125, 1.25, 1.8750125),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0]
+"values": [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0]
 }
 
 [sub_resource type="Animation" id="Animation_0onds"]
@@ -145,6 +220,18 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [50, 51, 52, 53, 54, 55, 56]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/Sprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
 }
 
 [sub_resource type="Animation" id="Animation_lfs1x"]
@@ -164,6 +251,18 @@ tracks/0/keys = {
 "update": 1,
 "values": [40, 41, 42, 43, 44, 45, 46]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/Sprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
 
 [sub_resource type="Animation" id="Animation_8eiau"]
 resource_name = "ranged_attacks"
@@ -181,6 +280,18 @@ tracks/0/keys = {
 "update": 1,
 "values": [20, 21, 22, 23, 24, 25, 26, 27, 28]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/Sprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_vn2fc"]
 _data = {
@@ -196,26 +307,81 @@ _data = {
 &"ranged_attacks": SubResource("Animation_8eiau")
 }
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_jncid"]
+radius = 140.0
+
 [node name="Node2D" type="Node2D" unique_id=1861257543]
 
-[node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=39052010]
+[node name="boss" type="CharacterBody2D" parent="." unique_id=39052010]
+collision_layer = 4
+collision_mask = 15
+script = ExtResource("1_2cdgk")
 
-[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D" unique_id=2035387345]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="boss" unique_id=482710018]
+position = Vector2(-2, -3)
+shape = SubResource("CapsuleShape2D_neq0i")
+
+[node name="Sprite2D" type="Sprite2D" parent="boss" unique_id=2035387345]
 position = Vector2(-1, 0)
 texture = ExtResource("1_neq0i")
 hframes = 10
 vframes = 10
 
-[node name="Pivot" type="Node2D" parent="CharacterBody2D" unique_id=1863181482]
+[node name="Pivot" type="Node2D" parent="boss" unique_id=1863181482]
 
-[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D/Pivot" unique_id=449792569]
-position = Vector2(100, 0)
+[node name="Sprite2D" type="Sprite2D" parent="boss/Pivot" unique_id=449792569]
+position = Vector2(98, 0)
 texture = ExtResource("2_jncid")
 vframes = 15
 frame = 1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CharacterBody2D" unique_id=989785304]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="boss" unique_id=989785304]
 libraries/ = SubResource("AnimationLibrary_vn2fc")
 autoplay = &"idle"
 
-[node name="CanvasLayer" type="CanvasLayer" parent="CharacterBody2D" unique_id=1046911401]
+[node name="UI" type="CanvasLayer" parent="boss" unique_id=1046911401]
+
+[node name="PlayerDetection" type="Area2D" parent="boss" unique_id=620119872]
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="boss/PlayerDetection" unique_id=538940590]
+shape = SubResource("CircleShape2D_jncid")
+
+[node name="FiniteStateMachine" type="Node2D" parent="boss" unique_id=241364173]
+script = ExtResource("3_qnbj4")
+
+[node name="Idle" type="Node2D" parent="boss/FiniteStateMachine" unique_id=232567902]
+script = ExtResource("4_wqpjq")
+
+[node name="Follow" type="Node2D" parent="boss/FiniteStateMachine" unique_id=245017697]
+script = ExtResource("6_qsl3t")
+
+[node name="MeleeAttack" type="Node2D" parent="boss/FiniteStateMachine" unique_id=366064094]
+script = ExtResource("7_5m4cx")
+
+[node name="HomingMissile" type="Node2D" parent="boss/FiniteStateMachine" unique_id=798134225]
+script = ExtResource("8_0onds")
+bullet_node = ExtResource("9_8eiau")
+
+[node name="LaserBeam" type="Node2D" parent="boss/FiniteStateMachine" unique_id=604165074]
+script = ExtResource("8_5f346")
+
+[node name="ArmorBuff" type="Node2D" parent="boss/FiniteStateMachine" unique_id=831287399]
+script = ExtResource("9_0onds")
+
+[node name="Dash" type="Node2D" parent="boss/FiniteStateMachine" unique_id=1208708833]
+script = ExtResource("11_lfs1x")
+
+[node name="Death" type="Node2D" parent="boss/FiniteStateMachine" unique_id=644091892]
+script = ExtResource("12_lfs1x")
+
+[node name="debug" type="Label" parent="boss" unique_id=695601583]
+offset_left = -25.0
+offset_top = -48.0
+offset_right = 24.0
+offset_bottom = -25.0
+text = "debug"
+horizontal_alignment = 1
+
+[connection signal="body_entered" from="boss/PlayerDetection" to="boss/FiniteStateMachine/Idle" method="_on_player_detection_body_entered"]
+[connection signal="body_exited" from="boss/PlayerDetection" to="boss/FiniteStateMachine/Idle" method="_on_player_detection_body_exited"]

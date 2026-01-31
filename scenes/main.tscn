@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/character_body_2d.gd" id="3_j7wrs"]
 [ext_resource type="Texture2D" uid="uid://bu510rq3khy0q" path="res://assets/main_character.png" id="5_04qyp"]
 [ext_resource type="Script" uid="uid://c7qk5anmpq1im" path="res://scripts/dungeon_generator.gd" id="5_o6xl0"]
+[ext_resource type="PackedScene" uid="uid://c4n8f8uk1m84t" path="res://scenes/boss_room.tscn" id="6_tefeu"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0e48y"]
 texture = ExtResource("1_o6xl0")
@@ -127,3 +128,7 @@ position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 
 [connection signal="dungeon_generated" from="TileMap" to="UI/MarginContainer/Minimap" method="update_dungeon_data"]
+[node name="Node2D" type="Node2D" parent="." unique_id=407149965]
+
+[node name="BossRoom" parent="." unique_id=261575104 instance=ExtResource("6_tefeu")]
+position = Vector2(-67, 13)

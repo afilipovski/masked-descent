@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://beenxo0abgyb0"]
+
+[ext_resource type="Script" uid="uid://cfihb46a0f3vq" path="res://scenes/bullet.gd" id="1_y25gk"]
+[ext_resource type="Texture2D" uid="uid://durkixdchrgla" path="res://assets/Mecha-stone Golem 0.1/weapon PNG/arm_projectile_glowing.png" id="2_l5glv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y25gk"]
+atlas = ExtResource("2_l5glv")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l5glv"]
+atlas = ExtResource("2_l5glv")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eoqba"]
+atlas = ExtResource("2_l5glv")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qncy5"]
+atlas = ExtResource("2_l5glv")
+region = Rect2(0, 100, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tamys"]
+atlas = ExtResource("2_l5glv")
+region = Rect2(100, 100, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26lx3"]
+atlas = ExtResource("2_l5glv")
+region = Rect2(200, 100, 100, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1cfmv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y25gk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l5glv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eoqba")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qncy5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tamys")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26lx3")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k76ql"]
+size = Vector2(30, 10)
+
+[node name="bullet" type="Area2D" unique_id=223004450]
+script = ExtResource("1_y25gk")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=911642275]
+sprite_frames = SubResource("SpriteFrames_1cfmv")
+autoplay = "default"
+frame_progress = 0.30374753
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1473604804]
+position = Vector2(27, -13)
+shape = SubResource("RectangleShape2D_k76ql")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
