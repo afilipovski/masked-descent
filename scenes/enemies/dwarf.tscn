@@ -1,8 +1,9 @@
 [gd_scene format=3 uid="uid://cs0uiq4hqgsgr"]
 
-[ext_resource type="Script" uid="uid://dc8s7kgh5o7or" path="res://scripts/enemies/dwarf.gd" id="1_0g8kj"]
-[ext_resource type="Texture2D" uid="uid://b0dysdihj27pd" path="res://assets/enemies/dwarf_animated.png" id="2_uspnt"]
+[ext_resource type="Script" uid="uid://pjyhvkbqbarx" path="res://scripts/enemies/dwarf.gd" id="1_0g8kj"]
+[ext_resource type="Texture2D" uid="uid://s4ct1loxnuau" path="res://assets/enemies/dwarf_animated.png" id="2_uspnt"]
 [ext_resource type="PackedScene" uid="uid://bmnolqwq03q1k" path="res://scenes/swoosh_attack.tscn" id="2_ycnfq"]
+[ext_resource type="PackedScene" uid="uid://p7pbv3l0n55" path="res://scenes/death_effect.tscn" id="3_jgtmn"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eid3i"]
 atlas = ExtResource("2_uspnt")
@@ -75,8 +76,11 @@ animations = [{
 radius = 12.0
 
 [node name="Dwarf" type="CharacterBody2D" unique_id=830158451]
+collision_layer = 141
+collision_mask = 141
 script = ExtResource("1_0g8kj")
 attack_effect_scene = ExtResource("2_ycnfq")
+death_effect_scene = ExtResource("3_jgtmn")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=879989605]
 sprite_frames = SubResource("SpriteFrames_pcix0")
@@ -87,6 +91,8 @@ position = Vector2(0, 4)
 shape = SubResource("CircleShape2D_eid3i")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=2023391107]
+collision_layer = 137
+collision_mask = 137
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=518019176]
 position = Vector2(0, 4)

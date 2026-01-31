@@ -2,12 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bwynsxtfuy7vk"
-valid=false
+uid="uid://qivsqux1bks"
+path="res://.godot/imported/poof.png-2c2919456ed37b06057f67b0d43bb75f.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
-source_file="res://assets/dwarf_animated.png"
+source_file="res://assets/poof.png"
+dest_files=["res://.godot/imported/poof.png-2c2919456ed37b06057f67b0d43bb75f.ctex"]
 
 [params]
 

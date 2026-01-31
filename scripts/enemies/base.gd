@@ -6,6 +6,7 @@ class_name BaseEnemy
 @export var detection_range: float = 200.0
 @export var health: int = 3
 @export var max_health: int = 3
+@export var death_effect_scene: PackedScene
 
 var player: Node2D
 var damage_timer: Timer
@@ -69,16 +70,28 @@ func die():
 	_on_death()
 	queue_free()
 
+
 func _on_death():
-	pass
+	if !death_effect_scene:
+		return
+
+	var effect = death_effect_scene.instantiate()
+	get_parent().add_child(effect)
+	effect.global_position = global_position
+
 
 func _on_hitbox_body_entered(body: Node2D):
+	print("Hitbox detected body: ", body.name, " groups: ", body.get_groups())
 	if body.is_in_group("player"):
+		print("Player entered hitbox!")
 		player_in_hitbox = true
 		_attack_player(body)
 		damage_timer.start()
+	else:
+		print("Body is not in player group")
 
 func _on_hitbox_body_exited(body: Node2D):
+	print("Hitbox body exited: ", body.name)
 	if body.is_in_group("player"):
 		player_in_hitbox = false
 		damage_timer.stop()
