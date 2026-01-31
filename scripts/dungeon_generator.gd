@@ -20,14 +20,19 @@ const WALL_E_SOURCE = 5
 const WALL_W_SOURCE = 6
 const WALL_NE_SOURCE = 7
 const WALL_NW_SOURCE = 8
+const DOOR_SOURCE = 9
 const ATLAS_COORDS = Vector2i(0, 0)
 
 const ENEMY_SCENE = preload("res://scenes/enemies/dwarf.tscn")
 
 var rooms: Array[Rect2i] = []
 var room_connections: Array[Vector2i] = []
+var door_position: Vector2i = Vector2i.ZERO
+var total_enemies: int = 0
+var door_open: bool = false
 
 signal dungeon_generated(rooms_data: Array[Rect2i], stairs_position: Vector2i, connections: Array[Vector2i])
+signal door_opened()
 
 func _ready():
 	generate_dungeon()
@@ -36,6 +41,8 @@ func generate_dungeon():
 	clear()
 	rooms.clear()
 	room_connections.clear()
+	door_open = false
+	total_enemies = 0
 
 	fill_with_walls()
 
@@ -61,8 +68,8 @@ func generate_dungeon():
 	# Phase 2: Texture walls with appropriate tile types
 	texture_walls()
 
-	place_stairs()
-	spawn_enemies()
+	place_door()
+	total_enemies = spawn_enemies()
 
 
 	var stairs_pos = Vector2i.ZERO
@@ -70,7 +77,7 @@ func generate_dungeon():
 		stairs_pos = get_room_center(rooms[-1])
 
 	dungeon_generated.emit(rooms, stairs_pos, room_connections)
-	print("Generated dungeon with ", rooms.size(), " rooms")
+	print("Generated dungeon with ", rooms.size(), " rooms and ", total_enemies, " enemies")
 
 func fill_with_walls():
 	for x in range(-map_width / 2, map_width / 2):
@@ -152,7 +159,7 @@ func remove_thin_walls():
 
 		for cell in used_cells:
 			var source_id = get_cell_source_id(0, cell)
-			if source_id == FLOOR_SOURCE or source_id == STAIRS_SOURCE:
+			if source_id == FLOOR_SOURCE or source_id == STAIRS_SOURCE or source_id == DOOR_SOURCE:
 				continue
 
 			# Check if this wall is surrounded by floor on opposite sides
@@ -178,7 +185,7 @@ func texture_walls():
 	for cell in used_cells:
 		var source_id = get_cell_source_id(0, cell)
 		# Only texture wall tiles
-		if source_id != FLOOR_SOURCE and source_id != STAIRS_SOURCE:
+		if source_id != FLOOR_SOURCE and source_id != STAIRS_SOURCE and source_id != DOOR_SOURCE:
 			var wall_type = get_wall_type_for_position(cell)
 			set_cell(0, cell, wall_type, ATLAS_COORDS)
 
@@ -233,18 +240,18 @@ func get_spawn_position() -> Vector2:
 		return map_to_local(center)
 	return Vector2.ZERO
 
-func place_stairs():
+func place_door():
 	if rooms.size() > 0:
 		var last_room = rooms[-1]
-		var stairs_pos = get_room_center(last_room)
-		set_cell(0, stairs_pos, STAIRS_SOURCE, ATLAS_COORDS)
-		print("Placed stairs at: ", stairs_pos)
+		door_position = get_room_center(last_room)
+		set_cell(0, door_position, DOOR_SOURCE, ATLAS_COORDS)
+		print("Placed door at: ", door_position)
 
-func spawn_enemies():
+func spawn_enemies() -> int:
 	clear_existing_enemies()
 
-	var total_enemies = 0
-	# Skip first room (player spawn) and last room (stairs)
+	var enemies_spawned = 0
+	# Skip first room (player spawn) and last room (door)
 	for i in range(1, rooms.size() - 1):
 		var room = rooms[i]
 		var room_area = room.size.x * room.size.y
@@ -256,10 +263,12 @@ func spawn_enemies():
 			var enemy_instance = ENEMY_SCENE.instantiate()
 			var spawn_pos = get_random_position_in_room(room)
 			enemy_instance.global_position = map_to_local(spawn_pos)
-			get_parent().add_child(enemy_instance)
-			total_enemies += 1
+			enemy_instance.tree_exited.connect(_on_enemy_died)
+			get_parent().add_child.call_deferred(enemy_instance)
+			enemies_spawned += 1
 
-	print("Total enemies spawned: ", total_enemies)
+	print("Total enemies spawned: ", enemies_spawned)
+	return enemies_spawned
 
 func get_random_position_in_room(room: Rect2i) -> Vector2i:
 	var x = randi_range(room.position.x + 1, room.position.x + room.size.x - 2)
@@ -274,3 +283,29 @@ func clear_existing_enemies():
 func regenerate():
 	generate_dungeon()
 	get_tree().call_group(Groups.PLAYER, "reset_position")
+
+func _on_enemy_died():
+	if door_open:
+		return
+	
+	var enemies_alive = get_tree().get_nodes_in_group(Groups.ENEMY).size()
+	var enemies_killed = total_enemies - enemies_alive
+	var kill_percentage = float(enemies_killed) / float(total_enemies) if total_enemies > 0 else 0.0
+	
+	print("Enemies killed: ", enemies_killed, "/", total_enemies, " (", int(kill_percentage * 100), "%)")
+	
+	if kill_percentage >= 0.30:
+		open_door()
+
+func open_door():
+	if door_open:
+		return
+	
+	door_open = true
+	# Replace door with stairs
+	set_cell(0, door_position, STAIRS_SOURCE, ATLAS_COORDS)
+	print("Door opened! Stairs revealed at: ", door_position)
+	door_opened.emit()
+
+func is_door_position(pos: Vector2i) -> bool:
+	return pos == door_position and not door_open

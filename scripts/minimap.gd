@@ -5,6 +5,7 @@ class_name Minimap
 @export var room_color = Color(0.5, 0.5, 0.5)
 @export var background_color = Color(0.1, 0.1, 0.1)
 @export var stairs_color = Color(1, 0.8, 0)
+@export var door_color = Color(0.8, 0.4, 0.1)
 @export var current_room_color = Color(0.8, 0.8, 0.8)
 @export var corridor_color = Color(0.6, 0.6, 0.6)
 @export var player_color = Color(0, 1, 1)
@@ -15,6 +16,7 @@ var rooms: Array[Rect2i] = []
 var room_connections: Array[Vector2i] = []
 var map_bounds = Rect2i()
 var stairs_position = Vector2i.ZERO
+var door_open: bool = false
 var current_room_index = -1
 var player: Node2D = null
 var tilemap: TileMap = null
@@ -28,6 +30,10 @@ func _ready():
 	await get_tree().process_frame
 	player = get_tree().get_first_node_in_group(Groups.PLAYER)
 	tilemap = get_tree().get_first_node_in_group(Groups.TILEMAP)
+	
+	# Connect to door opened signal
+	if tilemap and tilemap.has_signal("door_opened"):
+		tilemap.door_opened.connect(_on_door_opened)
 
 func update_minimap_size() -> void:
 	var viewport_size = get_viewport_rect().size
@@ -71,6 +77,7 @@ func update_dungeon_data(
 	rooms = new_rooms
 	stairs_position = new_stairs_position
 	room_connections = connections
+	door_open = false
 	calculate_map_bounds()
 	queue_redraw()
 
@@ -149,7 +156,12 @@ func _draw_stairs():
 		return
 
 	var stairs_minimap_pos = dungeon_to_minimap(Vector2(stairs_position))
-	draw_circle(stairs_minimap_pos, 3.0, stairs_color)
+	var color = stairs_color if door_open else door_color
+	draw_circle(stairs_minimap_pos, 3.0, color)
+
+func _on_door_opened():
+	door_open = true
+	queue_redraw()
 
 func _draw_player():
 	if not player or not tilemap:

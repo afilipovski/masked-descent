@@ -19,6 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://5wk2217drca7" path="res://assets/wall-w.png" id="7_wall_w"]
 [ext_resource type="Texture2D" uid="uid://clc2l7mydwmgc" path="res://assets/wall-corner-ne.png" id="8_wall_ne"]
 [ext_resource type="Texture2D" uid="uid://dux32kp2atja0" path="res://assets/wall-corner-nw.png" id="9_wall_nw"]
+[ext_resource type="Texture2D" path="res://assets/door.png" id="10_door"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0e48y"]
 texture = ExtResource("1_o6xl0")
@@ -72,6 +73,12 @@ texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door"]
+texture = ExtResource("10_door")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+
 [sub_resource type="TileSet" id="TileSet_epypp"]
 tile_size = Vector2i(32, 32)
 physics_layer_0/collision_layer = 1
@@ -84,6 +91,7 @@ sources/5 = SubResource("TileSetAtlasSource_wall_e")
 sources/6 = SubResource("TileSetAtlasSource_wall_w")
 sources/7 = SubResource("TileSetAtlasSource_wall_ne")
 sources/8 = SubResource("TileSetAtlasSource_wall_nw")
+sources/9 = SubResource("TileSetAtlasSource_door")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_4vge2"]
 

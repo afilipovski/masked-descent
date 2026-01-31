@@ -8,6 +8,7 @@ const SPEED = 200.0
 const SPRINT_MULTIPLIER = 1.8
 const FIRE_COOLDOWN = 0.5 # Seconds between shots
 const STAIRS_SOURCE = 2
+const DOOR_SOURCE = 9
 
 @export var max_health: int = 10
 @export var wall_collision_damage: int = 2
@@ -80,6 +81,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y = move_toward(velocity.y, 0, SPEED)
 
 	move_and_slide()
+	_check_door_collision()
 	check_stairs()
 
 	if sprite:
@@ -142,8 +144,21 @@ func check_stairs() -> void:
 		var tile_pos = tilemap.local_to_map(position)
 		var tile_source = tilemap.get_cell_source_id(0, tile_pos)
 
+		# Only allow descending on stairs (not door)
 		if tile_source == STAIRS_SOURCE:
 			descend_to_next_level()
+
+func _check_door_collision() -> void:
+	var tilemap = get_parent().get_node_or_null("TileMap")
+	if not tilemap or not tilemap.has_method("is_door_position"):
+		return
+	
+	var tile_pos = tilemap.local_to_map(position)
+	if tilemap.is_door_position(tile_pos):
+		# Push player back from door
+		var door_world_pos = tilemap.map_to_local(tile_pos)
+		var push_direction = (position - door_world_pos).normalized()
+		position += push_direction * 2.0
 
 func descend_to_next_level() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
