@@ -17,7 +17,6 @@ func _ready() -> void:
 	add_to_group(Groups.PLAYER)
 	health = max_health
 	reset_position()
-	reset_position()
 
 
 func reset_position() -> void:

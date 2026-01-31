@@ -2,8 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://b5x71iuusdvnu" path="res://assets/floor-test.png" id="1_4vge2"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
-[ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/player.gd" id="3_503t6"]
-[ext_resource type="Texture2D" uid="uid://b0mpuy4m3yxgp" path="res://assets/stairs.jpg" id="4_503t6"]
+[ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/character_body_2d.gd" id="3_503t6"]
+[ext_resource type="Texture2D" uid="uid://bu510rq3khy0q" path="res://assets/main_character.png" id="3_vqwjj"]
 [ext_resource type="PackedScene" uid="uid://cs0uiq4hqgsgr" path="res://scenes/enemies/dwarf.tscn" id="5_503t6"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0e48y"]
@@ -36,9 +36,6 @@ layer_0/tile_data = PackedInt32Array(0, 0, 0, -65536, 0, 0, -1, 0, 0, 65535, 0, 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=41287422]
 script = ExtResource("3_503t6")
 
-[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D" unique_id=1880422211]
-texture = ExtResource("4_503t6")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=1265427240]
 position = Vector2(0, 4)
 shape = SubResource("CircleShape2D_4vge2")
@@ -47,6 +44,9 @@ shape = SubResource("CircleShape2D_4vge2")
 zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D" unique_id=1228002380]
+texture = ExtResource("3_vqwjj")
 
 [node name="Dwarf" parent="." unique_id=830158451 instance=ExtResource("5_503t6")]
 position = Vector2(79, -114)
