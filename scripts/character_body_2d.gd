@@ -31,6 +31,7 @@ signal player_died
 func _ready() -> void:
 	add_to_group(Groups.PLAYER)
 	add_child(combat_manager)
+	health = max_health
 	reset_position()
 
 	# Load mask textures
@@ -162,7 +163,6 @@ func die():
 	print("Player died!")
 	player_died.emit()
 	health = max_health
-	reset_position()
 
 func _check_wall_collision_damage():
 	for i in get_slide_collision_count():

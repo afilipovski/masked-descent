@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
 [ext_resource type="FontFile" path="res://assets/DungeonFont.ttf" id="2_dungeon_font"]
 [ext_resource type="Script" path="res://scripts/dungeon_level_ui.gd" id="2_level_ui"]
+[ext_resource type="Script" path="res://scripts/game_over_ui.gd" id="2_game_over"]
 [ext_resource type="Texture2D" uid="uid://b0mpuy4m3yxgp" path="res://assets/stairs.jpg" id="3_fws66"]
 [ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/character_body_2d.gd" id="3_j7wrs"]
 [ext_resource type="Texture2D" uid="uid://0rcyg17w1i88" path="res://assets/wall-n.png" id="4_wall_n"]
@@ -117,6 +118,51 @@ theme_override_font_sizes/font_size = 24
 text = "Level 1"
 script = ExtResource("2_level_ui")
 
+[node name="GameOverScreen" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_game_over")
+
+[node name="ColorRect" type="ColorRect" parent="UI/GameOverScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.8)
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/GameOverScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/GameOverScreen/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="GameOverLabel" type="Label" parent="UI/GameOverScreen/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_dungeon_font")
+theme_override_font_sizes/font_size = 48
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="UI/GameOverScreen/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_dungeon_font")
+theme_override_font_sizes/font_size = 32
+text = "Restart"
+
 [node name="TileMap" type="TileMap" parent="." unique_id=1103315701 groups=["tilemap"]]
 light_mask = 12
 visibility_layer = 11
@@ -153,4 +199,5 @@ rotation_smoothing_enabled = true
 [node name="Node2D" type="Node2D" parent="." unique_id=407149965]
 
 [connection signal="mask_changed" from="UI/MaskInventory" to="Player" method="_on_mask_changed"]
+[connection signal="player_died" from="Player" to="UI/GameOverScreen" method="show_game_over"]
 [connection signal="dungeon_generated" from="TileMap" to="UI/MarginContainer/Minimap" method="update_dungeon_data"]
