@@ -5,16 +5,16 @@
 [ext_resource type="PackedScene" uid="uid://bv8gx3r4k5lna" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
 [ext_resource type="Texture2D" uid="uid://b0mpuy4m3yxgp" path="res://assets/stairs.jpg" id="3_fws66"]
-[ext_resource type="Texture2D" path="res://assets/wall-n.png" id="4_wall_n"]
-[ext_resource type="Texture2D" path="res://assets/wall-s.png" id="5_wall_s"]
-[ext_resource type="Texture2D" path="res://assets/wall-e.png" id="6_wall_e"]
-[ext_resource type="Texture2D" path="res://assets/wall-w.png" id="7_wall_w"]
-[ext_resource type="Texture2D" path="res://assets/wall-corner-ne.png" id="8_wall_ne"]
-[ext_resource type="Texture2D" path="res://assets/wall-corner-nw.png" id="9_wall_nw"]
 [ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/character_body_2d.gd" id="3_j7wrs"]
+[ext_resource type="Texture2D" uid="uid://0rcyg17w1i88" path="res://assets/wall-n.png" id="4_wall_n"]
 [ext_resource type="Texture2D" uid="uid://bu510rq3khy0q" path="res://assets/main_character.png" id="5_04qyp"]
 [ext_resource type="Script" uid="uid://c7qk5anmpq1im" path="res://scripts/dungeon_generator.gd" id="5_o6xl0"]
-[ext_resource type="PackedScene" uid="uid://c4n8f8uk1m84t" path="res://scenes/boss_room.tscn" id="6_tefeu"]
+[ext_resource type="Texture2D" uid="uid://b1nxaceg67pkb" path="res://assets/wall-s.png" id="5_wall_s"]
+[ext_resource type="PackedScene" path="res://scenes/boss_room.tscn" id="6_tefeu"]
+[ext_resource type="Texture2D" uid="uid://bqjw0titvxwbt" path="res://assets/wall-e.png" id="6_wall_e"]
+[ext_resource type="Texture2D" uid="uid://5wk2217drca7" path="res://assets/wall-w.png" id="7_wall_w"]
+[ext_resource type="Texture2D" uid="uid://clc2l7mydwmgc" path="res://assets/wall-corner-ne.png" id="8_wall_ne"]
+[ext_resource type="Texture2D" uid="uid://dux32kp2atja0" path="res://assets/wall-corner-nw.png" id="9_wall_nw"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0e48y"]
 texture = ExtResource("1_o6xl0")
@@ -130,8 +130,6 @@ zoom = Vector2(2, 2)
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 
-[connection signal="dungeon_generated" from="TileMap" to="UI/MarginContainer/Minimap" method="update_dungeon_data"]
-[node name="Node2D" type="Node2D" parent="." unique_id=407149965]
-
 [node name="BossRoom" parent="." unique_id=261575104 instance=ExtResource("6_tefeu")]
-position = Vector2(-67, 13)
+
+[connection signal="dungeon_generated" from="TileMap" to="UI/MarginContainer/Minimap" method="update_dungeon_data"]

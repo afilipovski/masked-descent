@@ -1,18 +1,18 @@
 [gd_scene format=3 uid="uid://dsntk08imjg58"]
 
-[ext_resource type="Script" uid="uid://dhn880l0gnged" path="res://scenes/boss.gd" id="1_2cdgk"]
+[ext_resource type="Script" uid="uid://dhn880l0gnged" path="res://scripts/boss/boss.gd" id="1_2cdgk"]
 [ext_resource type="Texture2D" uid="uid://ckhwv5fufnmjs" path="res://assets/Mecha-stone Golem 0.1/PNG sheet/Character_sheet.png" id="1_neq0i"]
 [ext_resource type="Texture2D" uid="uid://dtbddus22il2t" path="res://assets/Mecha-stone Golem 0.1/weapon PNG/Laser_sheet.png" id="2_jncid"]
-[ext_resource type="Script" uid="uid://ddh8uetrmb73i" path="res://scenes/finite_state_machine.gd" id="3_qnbj4"]
-[ext_resource type="Script" uid="uid://bwf01upd1qvob" path="res://scenes/idle.gd" id="4_wqpjq"]
-[ext_resource type="Script" uid="uid://c8g6b6wrxxp7q" path="res://scenes/follow.gd" id="6_qsl3t"]
-[ext_resource type="Script" uid="uid://d3r5a4hxhbf7k" path="res://scenes/melee_attack.gd" id="7_5m4cx"]
-[ext_resource type="Script" uid="uid://bp7lxxwr0p8mo" path="res://scenes/homing_missile.gd" id="8_0onds"]
-[ext_resource type="Script" uid="uid://b5waicura4l7e" path="res://scenes/laser_beam.gd" id="8_5f346"]
-[ext_resource type="Script" uid="uid://cy5okpj1jx6i0" path="res://scenes/armor_buff.gd" id="9_0onds"]
+[ext_resource type="Script" uid="uid://ddh8uetrmb73i" path="res://scripts/boss/finite_state_machine.gd" id="3_qnbj4"]
+[ext_resource type="Script" uid="uid://bwf01upd1qvob" path="res://scripts/boss/idle.gd" id="4_wqpjq"]
+[ext_resource type="Script" uid="uid://c8g6b6wrxxp7q" path="res://scripts/boss/follow.gd" id="6_qsl3t"]
+[ext_resource type="Script" uid="uid://d3r5a4hxhbf7k" path="res://scripts/boss/melee_attack.gd" id="7_5m4cx"]
+[ext_resource type="Script" uid="uid://bp7lxxwr0p8mo" path="res://scripts/boss/homing_missile.gd" id="8_0onds"]
+[ext_resource type="Script" uid="uid://b5waicura4l7e" path="res://scripts/boss/laser_beam.gd" id="8_5f346"]
+[ext_resource type="Script" uid="uid://cy5okpj1jx6i0" path="res://scripts/boss/armor_buff.gd" id="9_0onds"]
 [ext_resource type="PackedScene" uid="uid://beenxo0abgyb0" path="res://scenes/bullet.tscn" id="9_8eiau"]
-[ext_resource type="Script" uid="uid://b3kadavdj8333" path="res://scenes/dash.gd" id="11_lfs1x"]
-[ext_resource type="Script" uid="uid://crgqael0eeyqh" path="res://scenes/death.gd" id="12_lfs1x"]
+[ext_resource type="Script" uid="uid://b3kadavdj8333" path="res://scripts/boss/dash.gd" id="11_lfs1x"]
+[ext_resource type="Script" uid="uid://crgqael0eeyqh" path="res://scripts/boss/death.gd" id="12_lfs1x"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_neq0i"]
 radius = 23.0
@@ -375,14 +375,6 @@ script = ExtResource("11_lfs1x")
 
 [node name="Death" type="Node2D" parent="boss/FiniteStateMachine" unique_id=644091892]
 script = ExtResource("12_lfs1x")
-
-[node name="debug" type="Label" parent="boss" unique_id=695601583]
-offset_left = -25.0
-offset_top = -48.0
-offset_right = 24.0
-offset_bottom = -25.0
-text = "debug"
-horizontal_alignment = 1
 
 [connection signal="body_entered" from="boss/PlayerDetection" to="boss/FiniteStateMachine/Idle" method="_on_player_detection_body_entered"]
 [connection signal="body_exited" from="boss/PlayerDetection" to="boss/FiniteStateMachine/Idle" method="_on_player_detection_body_exited"]
