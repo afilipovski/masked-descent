@@ -3,19 +3,15 @@ extends CharacterBody2D
 const PROJECTILE_SPELL = preload("uid://cvhml3bqscuh2")
 
 const SPEED = 200.0
+const SPRINT_MULTIPLIER = 1.8
 const FIRE_COOLDOWN = 0.5 # Seconds between shots
 const STAIRS_SOURCE = 2
 
-@export var max_health: int = 10
-var health: int
 var fire_timer = 0.0 # Time elapsed since last shot
 
-signal health_changed(new_health: int)
-signal player_died
 
 func _ready() -> void:
 	add_to_group(Groups.PLAYER)
-	health = max_health
 	reset_position()
 
 
@@ -33,8 +29,12 @@ func _physics_process(delta: float) -> void:
 		Inputs.MOVE_DOWN
 	)
 
+	var current_speed = SPEED
+	if Input.is_action_pressed(Inputs.SPRINT):
+		current_speed *= SPRINT_MULTIPLIER
+
 	if direction != Vector2.ZERO:
-		velocity = direction * SPEED
+		velocity = direction * current_speed
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.y = move_toward(velocity.y, 0, SPEED)
@@ -86,18 +86,3 @@ func descend_to_next_level() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
 	if tilemap and tilemap.has_method("regenerate"):
 		tilemap.regenerate()
-
-
-func take_damage(amount: int):
-	health -= amount
-	health_changed.emit(health)
-	print("Player took damage! Health: ", health)
-
-	if health <= 0:
-		die()
-
-func die():
-	print("Player died!")
-	player_died.emit()
-	health = max_health
-	reset_position()
