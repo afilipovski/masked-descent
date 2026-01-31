@@ -55,6 +55,7 @@ func generate_dungeon():
 			rooms.append(room)
 
 	place_walls_around_floors()
+	remove_thin_walls()
 	place_stairs()
 	spawn_enemies()
 
@@ -77,8 +78,9 @@ func create_random_room() -> Rect2i:
 	# Ensure room is not square by regenerating if w == h
 	while w == h:
 		h = randi_range(room_min_height, room_max_height)
-	var x = randi_range(-map_width / 2 + 1, map_width / 2 - w - 1)
-	var y = randi_range(-map_height / 2 + 1, map_height / 2 - h - 1)
+	# Keep rooms at least 2 tiles away from map edges to ensure wall border
+	var x = randi_range(-map_width / 2 + 2, map_width / 2 - w - 2)
+	var y = randi_range(-map_height / 2 + 2, map_height / 2 - h - 2)
 	return Rect2i(x, y, w, h)
 
 func can_place_room(room: Rect2i) -> bool:
@@ -136,6 +138,34 @@ func place_walls_around_floors():
 		if get_cell_source_id(0, check_pos) != FLOOR_SOURCE:
 			var wall_type = get_wall_type_for_position(check_pos)
 			set_cell(0, check_pos, wall_type, ATLAS_COORDS)
+
+func remove_thin_walls():
+	var changed = true
+	while changed:
+		changed = false
+		var used_cells = get_used_cells(0)
+		
+		for cell in used_cells:
+			var source_id = get_cell_source_id(0, cell)
+			if source_id == FLOOR_SOURCE or source_id == STAIRS_SOURCE:
+				continue
+			
+			# Check if this wall is surrounded by floor on opposite sides
+			var north = get_cell_source_id(0, Vector2i(cell.x, cell.y - 1))
+			var south = get_cell_source_id(0, Vector2i(cell.x, cell.y + 1))
+			var east = get_cell_source_id(0, Vector2i(cell.x + 1, cell.y))
+			var west = get_cell_source_id(0, Vector2i(cell.x - 1, cell.y))
+			
+			var is_floor_or_empty = func(id): return id == FLOOR_SOURCE or id == -1
+			
+			# Vertical single-tile wall: floor/empty on both left and right
+			if is_floor_or_empty.call(west) and is_floor_or_empty.call(east):
+				set_cell(0, cell, FLOOR_SOURCE, ATLAS_COORDS)
+				changed = true
+			# Horizontal single-tile wall: floor/empty on both top and bottom
+			elif is_floor_or_empty.call(north) and is_floor_or_empty.call(south):
+				set_cell(0, cell, FLOOR_SOURCE, ATLAS_COORDS)
+				changed = true
 
 func get_wall_type_for_position(pos: Vector2i) -> int:
 	# Check which directions have floor tiles
