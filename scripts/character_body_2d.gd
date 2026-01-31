@@ -55,7 +55,7 @@ func _physics_process(delta: float) -> void:
 		_check_wall_collision_damage()
 		return
 
-	if Input.is_action_just_pressed(Inputs.SWITCH_MASK):
+	if Input.is_action_just_pressed(Inputs.CYCLE_MASK):
 		combat_manager.cycle_mask()
 		combat_manager.activate_mobility()
 
@@ -184,13 +184,11 @@ func _check_wall_collision_damage():
 func apply_knockback(force: Vector2):
 	knockback_velocity = force
 
-<< << << < HEAD
-
 func _on_mask_changed(mask_index: int):
 	if mask_index >= 0 and mask_index < mask_textures.size():
 		mask_sprite.texture = mask_textures[mask_index]
 		print("Player mask changed to: ", mask_index)
-== == == =
+
 func spawn_melee_hitbox(direction: Vector2) -> void:
 	var hitbox = MELEE_HITBOX.instantiate()
 	get_parent().add_child(hitbox)
@@ -198,4 +196,3 @@ func spawn_melee_hitbox(direction: Vector2) -> void:
 	var offset = direction.normalized() * 20
 	hitbox.global_position = global_position + offset
 	hitbox.rotation = direction.angle()
->> >> >> > ab46c61(feat: combosystem, melee, ranged, stealth)
