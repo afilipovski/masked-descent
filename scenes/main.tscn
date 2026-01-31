@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dpqgg2x88cm7h" path="res://assets/floor.png" id="1_o6xl0"]
 [ext_resource type="PackedScene" uid="uid://bylwq0ey4uygd" path="res://scenes/ui/minimap.tscn" id="1_tefeu"]
+[ext_resource type="PackedScene" uid="uid://bv8gx3r4k5lna" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
 [ext_resource type="Texture2D" uid="uid://b0mpuy4m3yxgp" path="res://assets/stairs.jpg" id="3_fws66"]
 [ext_resource type="Texture2D" path="res://assets/wall-n.png" id="4_wall_n"]
@@ -100,6 +101,8 @@ theme_override_constants/margin_bottom = 10
 
 [node name="Minimap" parent="UI/MarginContainer" unique_id=976864793 instance=ExtResource("1_tefeu")]
 layout_mode = 2
+
+[node name="MaskInventory" parent="UI" instance=ExtResource("2_mask_inv")]
 
 [node name="TileMap" type="TileMap" parent="." unique_id=1103315701 groups=["tilemap"]]
 light_mask = 12
