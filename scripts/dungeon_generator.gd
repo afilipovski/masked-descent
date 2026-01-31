@@ -9,11 +9,14 @@ extends TileMap
 @export var max_rooms: int = 15
 @export var min_room_spacing: int = 2
 @export var corridor_width: int = 3
+@export var enemies_per_room_area: float = 0.02
 
 const FLOOR_SOURCE = 0
 const WALL_SOURCE = 1
 const STAIRS_SOURCE = 2
 const ATLAS_COORDS = Vector2i(0, 0)
+
+const ENEMY_SCENE = preload("res://scenes/enemies/dwarf.tscn")
 
 var rooms: Array[Rect2i] = []
 
@@ -41,6 +44,7 @@ func generate_dungeon():
 	
 	place_walls_around_floors()
 	place_stairs()
+	spawn_enemies()
 	
 	print("Generated dungeon with ", rooms.size(), " rooms")
 
@@ -127,6 +131,37 @@ func place_stairs():
 		var stairs_pos = get_room_center(last_room)
 		set_cell(0, stairs_pos, STAIRS_SOURCE, ATLAS_COORDS)
 		print("Placed stairs at: ", stairs_pos)
+
+func spawn_enemies():
+	clear_existing_enemies()
+	
+	var total_enemies = 0
+	# Skip first room (player spawn) and last room (stairs)
+	for i in range(1, rooms.size() - 1):
+		var room = rooms[i]
+		var room_area = room.size.x * room.size.y
+		var num_enemies = max(1, int(room_area * enemies_per_room_area))
+		
+		print("Room ", i, " (", room.size.x, "x", room.size.y, ", area: ", room_area, "): spawning ", num_enemies, " enemies")
+		
+		for j in range(num_enemies):
+			var enemy_instance = ENEMY_SCENE.instantiate()
+			var spawn_pos = get_random_position_in_room(room)
+			enemy_instance.global_position = map_to_local(spawn_pos)
+			get_parent().add_child(enemy_instance)
+			total_enemies += 1
+	
+	print("Total enemies spawned: ", total_enemies)
+
+func get_random_position_in_room(room: Rect2i) -> Vector2i:
+	var x = randi_range(room.position.x + 1, room.position.x + room.size.x - 2)
+	var y = randi_range(room.position.y + 1, room.position.y + room.size.y - 2)
+	return Vector2i(x, y)
+
+func clear_existing_enemies():
+	var enemies = get_tree().get_nodes_in_group("enemies")
+	for enemy in enemies:
+		enemy.queue_free()
 
 func regenerate():
 	generate_dungeon()

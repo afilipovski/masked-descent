@@ -1,14 +1,14 @@
 [gd_scene format=3 uid="uid://bhlm0lcav28hw"]
 
-[ext_resource type="Texture2D" uid="uid://b5x71iuusdvnu" path="res://assets/floor-test.png" id="1_4vge2"]
+[ext_resource type="Texture2D" uid="uid://dpqgg2x88cm7h" path="res://assets/floor.png" id="1_o6xl0"]
 [ext_resource type="Script" uid="uid://c7qk5anmpq1im" path="res://scripts/dungeon_generator.gd" id="1_tefeu"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
 [ext_resource type="Texture2D" uid="uid://b0mpuy4m3yxgp" path="res://assets/stairs.jpg" id="3_fws66"]
-[ext_resource type="Script" path="res://scripts/character_body_2d.gd" id="3_j7wrs"]
+[ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/character_body_2d.gd" id="3_j7wrs"]
 [ext_resource type="Texture2D" uid="uid://bu510rq3khy0q" path="res://assets/main_character.png" id="5_04qyp"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0e48y"]
-texture = ExtResource("1_4vge2")
+texture = ExtResource("1_o6xl0")
 0:0/size_in_atlas = Vector2i(2, 2)
 0:0/0 = 0
 
