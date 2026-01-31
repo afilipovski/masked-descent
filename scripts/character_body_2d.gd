@@ -149,6 +149,7 @@ func descend_to_next_level() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
 	if tilemap and tilemap.has_method("regenerate"):
 		GameState.increment_level()
+		GameState.add_score(20)
 		tilemap.regenerate()
 
 func take_damage(amount: int):

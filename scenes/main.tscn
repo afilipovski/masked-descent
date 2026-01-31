@@ -3,10 +3,11 @@
 [ext_resource type="Texture2D" uid="uid://dpqgg2x88cm7h" path="res://assets/floor.png" id="1_o6xl0"]
 [ext_resource type="PackedScene" uid="uid://bylwq0ey4uygd" path="res://scenes/ui/minimap.tscn" id="1_tefeu"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
+[ext_resource type="FontFile" uid="uid://6irm4vqoi87n" path="res://assets/DungeonFont.ttf" id="2_dungeon_font"]
+[ext_resource type="Script" uid="uid://dora04h1ltgcp" path="res://scripts/game_over_ui.gd" id="2_game_over"]
+[ext_resource type="Script" uid="uid://xt5yq5022r3t" path="res://scripts/dungeon_level_ui.gd" id="2_level_ui"]
 [ext_resource type="PackedScene" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
-[ext_resource type="FontFile" path="res://assets/DungeonFont.ttf" id="2_dungeon_font"]
-[ext_resource type="Script" path="res://scripts/dungeon_level_ui.gd" id="2_level_ui"]
-[ext_resource type="Script" path="res://scripts/game_over_ui.gd" id="2_game_over"]
+[ext_resource type="Script" uid="uid://c32twut0orgx4" path="res://scripts/score_ui.gd" id="2_score_ui"]
 [ext_resource type="Texture2D" uid="uid://b0mpuy4m3yxgp" path="res://assets/stairs.jpg" id="3_fws66"]
 [ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/character_body_2d.gd" id="3_j7wrs"]
 [ext_resource type="Texture2D" uid="uid://0rcyg17w1i88" path="res://assets/wall-n.png" id="4_wall_n"]
@@ -107,7 +108,7 @@ layout_mode = 2
 
 [node name="MaskInventory" parent="UI" unique_id=1103877401 instance=ExtResource("2_mask_inv")]
 
-[node name="DungeonLevelLabel" type="Label" parent="UI"]
+[node name="DungeonLevelLabel" type="Label" parent="UI" unique_id=286731216]
 offset_left = 10.0
 offset_top = 10.0
 offset_right = 150.0
@@ -118,7 +119,22 @@ theme_override_font_sizes/font_size = 24
 text = "Level 1"
 script = ExtResource("2_level_ui")
 
-[node name="GameOverScreen" type="Control" parent="UI"]
+[node name="ScoreLabel" type="Label" parent="UI" unique_id=1034201738]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -1142.0
+offset_top = 38.0
+offset_right = -1038.0
+offset_bottom = 63.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_dungeon_font")
+theme_override_font_sizes/font_size = 24
+text = "Score: 0"
+script = ExtResource("2_score_ui")
+
+[node name="GameOverScreen" type="Control" parent="UI" unique_id=491549925]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -127,7 +143,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_game_over")
 
-[node name="ColorRect" type="ColorRect" parent="UI/GameOverScreen"]
+[node name="ColorRect" type="ColorRect" parent="UI/GameOverScreen" unique_id=1714135575]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -136,7 +152,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.8)
 
-[node name="CenterContainer" type="CenterContainer" parent="UI/GameOverScreen"]
+[node name="CenterContainer" type="CenterContainer" parent="UI/GameOverScreen" unique_id=1514728425]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -144,11 +160,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/GameOverScreen/CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/GameOverScreen/CenterContainer" unique_id=1575150525]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="GameOverLabel" type="Label" parent="UI/GameOverScreen/CenterContainer/VBoxContainer"]
+[node name="GameOverLabel" type="Label" parent="UI/GameOverScreen/CenterContainer/VBoxContainer" unique_id=904475402]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_dungeon_font")
@@ -156,7 +172,23 @@ theme_override_font_sizes/font_size = 48
 text = "GAME OVER"
 horizontal_alignment = 1
 
-[node name="RestartButton" type="Button" parent="UI/GameOverScreen/CenterContainer/VBoxContainer"]
+[node name="ScoreLabel" type="Label" parent="UI/GameOverScreen/CenterContainer/VBoxContainer" unique_id=1698541874]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_dungeon_font")
+theme_override_font_sizes/font_size = 32
+text = "Score: 0"
+horizontal_alignment = 1
+
+[node name="HighScoreMessage" type="Label" parent="UI/GameOverScreen/CenterContainer/VBoxContainer" unique_id=1546728330]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_fonts/font = ExtResource("2_dungeon_font")
+theme_override_font_sizes/font_size = 28
+text = "NEW HIGH SCORE!"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="UI/GameOverScreen/CenterContainer/VBoxContainer" unique_id=2044114246]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_dungeon_font")
@@ -199,5 +231,5 @@ rotation_smoothing_enabled = true
 [node name="Node2D" type="Node2D" parent="." unique_id=407149965]
 
 [connection signal="mask_changed" from="UI/MaskInventory" to="Player" method="_on_mask_changed"]
-[connection signal="player_died" from="Player" to="UI/GameOverScreen" method="show_game_over"]
 [connection signal="dungeon_generated" from="TileMap" to="UI/MarginContainer/Minimap" method="update_dungeon_data"]
+[connection signal="player_died" from="Player" to="UI/GameOverScreen" method="show_game_over"]

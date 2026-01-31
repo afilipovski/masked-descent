@@ -44,3 +44,7 @@ func _physics_process(delta):
 
 func take_damage():
 	health -= 10 - DEF
+
+func die():
+	GameState.add_score(50)
+	queue_free()

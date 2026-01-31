@@ -68,6 +68,7 @@ func _on_damage_taken(_amount: int):
 
 func die():
 	_on_death()
+	GameState.add_score(10)
 	queue_free()
 
 

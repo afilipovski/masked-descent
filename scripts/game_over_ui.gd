@@ -1,6 +1,8 @@
 extends Control
 
 @onready var restart_button = $CenterContainer/VBoxContainer/RestartButton
+@onready var score_label = $CenterContainer/VBoxContainer/ScoreLabel
+@onready var high_score_message = $CenterContainer/VBoxContainer/HighScoreMessage
 
 func _ready() -> void:
 	hide()
@@ -12,6 +14,15 @@ func _input(event: InputEvent) -> void:
 
 func show_game_over() -> void:
 	show()
+	score_label.text = "Score: %d" % GameState.score
+	
+	if GameState.is_new_high_score():
+		high_score_message.text = "NEW HIGH SCORE!"
+		high_score_message.show()
+	else:
+		high_score_message.text = "High Score: %d" % GameState.high_score
+		high_score_message.show()
+	
 	restart_button.grab_focus()
 
 func _on_restart_pressed() -> void:
