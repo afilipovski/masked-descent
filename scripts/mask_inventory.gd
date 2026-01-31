@@ -4,23 +4,20 @@ extends CanvasLayer
 @onready var current_mask_slot = $CarouselContainer/CurrentMask
 @onready var next_mask_slot = $CarouselContainer/NextMask
 
-# Define all available mask colors
-var mask_colors = [
-	Color(1, 0, 0, 1),      # Red
-	Color(0, 1, 0, 1),      # Green
-	Color(0, 0, 1, 1),      # Blue
-	Color(1, 1, 0, 1),      # Yellow
-	Color(1, 0, 1, 1),      # Magenta
-	Color(0, 1, 1, 1),      # Cyan
-	Color(1, 0.5, 0, 1),    # Orange
-	Color(0.5, 0, 1, 1)     # Purple
-]
-
+# Define all available mask textures
+var mask_textures = []
 var current_mask_index = 0
 
 signal mask_changed(mask_index: int)
 
 func _ready():
+	# Load mask textures
+	mask_textures = [
+		load("res://assets/mask_1.png"),
+		load("res://assets/mask_2.png"),
+		load("res://assets/mask_3.png")
+	]
+	
 	_update_carousel_display()
 
 
@@ -30,10 +27,10 @@ func _input(event):
 
 
 func cycle_to_next_mask():
-	if mask_colors.size() == 0:
+	if mask_textures.size() == 0:
 		return
 	
-	current_mask_index = (current_mask_index + 1) % mask_colors.size()
+	current_mask_index = (current_mask_index + 1) % mask_textures.size()
 	_update_carousel_display()
 	mask_changed.emit(current_mask_index)
 	
@@ -41,17 +38,17 @@ func cycle_to_next_mask():
 
 
 func _update_carousel_display():
-	if mask_colors.size() == 0:
+	if mask_textures.size() == 0:
 		return
 	
 	# Calculate indices for previous and next masks (wrap around)
-	var previous_index = (current_mask_index - 1 + mask_colors.size()) % mask_colors.size()
-	var next_index = (current_mask_index + 1) % mask_colors.size()
+	var previous_index = (current_mask_index - 1 + mask_textures.size()) % mask_textures.size()
+	var next_index = (current_mask_index + 1) % mask_textures.size()
 	
-	# Update colors
-	current_mask_slot.color = mask_colors[current_mask_index]
-	previous_mask_slot.color = mask_colors[previous_index]
-	next_mask_slot.color = mask_colors[next_index]
+	# Update textures
+	current_mask_slot.texture = mask_textures[current_mask_index]
+	previous_mask_slot.texture = mask_textures[previous_index]
+	next_mask_slot.texture = mask_textures[next_index]
 
 
 func get_current_mask_index() -> int:
