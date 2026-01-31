@@ -54,8 +54,13 @@ func generate_dungeon():
 
 			rooms.append(room)
 
+	# Phase 1: Enforce tile adjacency rules (place generic walls)
 	place_walls_around_floors()
 	remove_thin_walls()
+	
+	# Phase 2: Texture walls with appropriate tile types
+	texture_walls()
+	
 	place_stairs()
 	spawn_enemies()
 
@@ -133,11 +138,11 @@ func place_walls_around_floors():
 					if get_cell_source_id(0, neighbor) == -1 or get_cell_source_id(0, neighbor) == WALL_SOURCE:
 						wall_positions[neighbor] = true
 
+	# Place generic walls (enforce adjacency rules only)
 	for pos in wall_positions:
 		var check_pos = Vector2i(pos)
 		if get_cell_source_id(0, check_pos) != FLOOR_SOURCE:
-			var wall_type = get_wall_type_for_position(check_pos)
-			set_cell(0, check_pos, wall_type, ATLAS_COORDS)
+			set_cell(0, check_pos, WALL_SOURCE, ATLAS_COORDS)
 
 func remove_thin_walls():
 	var changed = true
@@ -166,6 +171,16 @@ func remove_thin_walls():
 			elif is_floor_or_empty.call(north) and is_floor_or_empty.call(south):
 				set_cell(0, cell, FLOOR_SOURCE, ATLAS_COORDS)
 				changed = true
+
+func texture_walls():
+	# Apply appropriate textures to all walls based on floor adjacency
+	var used_cells = get_used_cells(0)
+	for cell in used_cells:
+		var source_id = get_cell_source_id(0, cell)
+		# Only texture wall tiles
+		if source_id != FLOOR_SOURCE and source_id != STAIRS_SOURCE:
+			var wall_type = get_wall_type_for_position(cell)
+			set_cell(0, cell, wall_type, ATLAS_COORDS)
 
 func get_wall_type_for_position(pos: Vector2i) -> int:
 	# Check which directions have floor tiles
