@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://bylwq0ey4uygd"]
+
+[ext_resource type="Script" uid="uid://csn4qeddyqm0o" path="res://scripts/minimap.gd" id="1_4bivy"]
+
+[node name="Minimap" type="Control" unique_id=976864793]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_4bivy")

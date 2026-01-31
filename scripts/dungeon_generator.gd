@@ -25,6 +25,9 @@ const ATLAS_COORDS = Vector2i(0, 0)
 const ENEMY_SCENE = preload("res://scenes/enemies/dwarf.tscn")
 
 var rooms: Array[Rect2i] = []
+var room_connections: Array[Vector2i] = []
+
+signal dungeon_generated(rooms_data: Array[Rect2i], stairs_position: Vector2i, connections: Array[Vector2i])
 
 func _ready():
 	generate_dungeon()
@@ -32,26 +35,35 @@ func _ready():
 func generate_dungeon():
 	clear()
 	rooms.clear()
-	
+	room_connections.clear()
+
 	fill_with_walls()
-	
+
 	# Generate rooms
 	for i in range(max_rooms):
 		var room = create_random_room()
 		if can_place_room(room):
 			carve_room(room)
-			
+
 			if rooms.size() > 0:
 				var prev_center = get_room_center(rooms[-1])
 				var new_center = get_room_center(room)
 				carve_corridor(prev_center, new_center)
-			
+				# Record connection between previous room and new room
+				room_connections.append(Vector2i(rooms.size() - 1, rooms.size()))
+
 			rooms.append(room)
-	
+
 	place_walls_around_floors()
 	place_stairs()
 	spawn_enemies()
-	
+
+
+	var stairs_pos = Vector2i.ZERO
+	if rooms.size() > 0:
+		stairs_pos = get_room_center(rooms[-1])
+
+	dungeon_generated.emit(rooms, stairs_pos, room_connections)
 	print("Generated dungeon with ", rooms.size(), " rooms")
 
 func fill_with_walls():
@@ -90,17 +102,17 @@ func get_room_center(room: Rect2i) -> Vector2i:
 func carve_corridor(start: Vector2i, end: Vector2i):
 	var current = start
 	var half_width = corridor_width / 2
-	
+
 	while current.x != end.x:
 		for offset in range(-half_width, half_width + 1):
 			set_cell(0, Vector2i(current.x, current.y + offset), FLOOR_SOURCE, ATLAS_COORDS)
 		current.x += 1 if end.x > current.x else -1
-	
+
 	while current.y != end.y:
 		for offset in range(-half_width, half_width + 1):
 			set_cell(0, Vector2i(current.x + offset, current.y), FLOOR_SOURCE, ATLAS_COORDS)
 		current.y += 1 if end.y > current.y else -1
-	
+
 	for dx in range(-half_width, half_width + 1):
 		for dy in range(-half_width, half_width + 1):
 			set_cell(0, Vector2i(end.x + dx, end.y + dy), FLOOR_SOURCE, ATLAS_COORDS)
@@ -108,7 +120,7 @@ func carve_corridor(start: Vector2i, end: Vector2i):
 func place_walls_around_floors():
 	var floor_cells = get_used_cells(0)
 	var wall_positions = {}
-	
+
 	for cell in floor_cells:
 		if get_cell_source_id(0, cell) == FLOOR_SOURCE:
 			for dx in [-1, 0, 1]:
@@ -118,7 +130,7 @@ func place_walls_around_floors():
 					var neighbor = Vector2i(cell.x + dx, cell.y + dy)
 					if get_cell_source_id(0, neighbor) == -1 or get_cell_source_id(0, neighbor) == WALL_SOURCE:
 						wall_positions[neighbor] = true
-	
+
 	for pos in wall_positions:
 		var check_pos = Vector2i(pos)
 		if get_cell_source_id(0, check_pos) != FLOOR_SOURCE:
@@ -180,23 +192,23 @@ func place_stairs():
 
 func spawn_enemies():
 	clear_existing_enemies()
-	
+
 	var total_enemies = 0
 	# Skip first room (player spawn) and last room (stairs)
 	for i in range(1, rooms.size() - 1):
 		var room = rooms[i]
 		var room_area = room.size.x * room.size.y
 		var num_enemies = max(1, int(room_area * enemies_per_room_area))
-		
+
 		print("Room ", i, " (", room.size.x, "x", room.size.y, ", area: ", room_area, "): spawning ", num_enemies, " enemies")
-		
+
 		for j in range(num_enemies):
 			var enemy_instance = ENEMY_SCENE.instantiate()
 			var spawn_pos = get_random_position_in_room(room)
 			enemy_instance.global_position = map_to_local(spawn_pos)
 			get_parent().add_child(enemy_instance)
 			total_enemies += 1
-	
+
 	print("Total enemies spawned: ", total_enemies)
 
 func get_random_position_in_room(room: Rect2i) -> Vector2i:
@@ -211,4 +223,4 @@ func clear_existing_enemies():
 
 func regenerate():
 	generate_dungeon()
-	get_tree().call_group("player", "reset_position")
+	get_tree().call_group(Groups.PLAYER, "reset_position")
