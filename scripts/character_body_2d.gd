@@ -20,6 +20,7 @@ var fire_timer = 0.0 # Time elapsed since last shot
 
 var knockback_velocity: Vector2 = Vector2.ZERO
 var knockback_friction: float = 800.0
+var original_collision_mask: int = 0
 
 # Mask textures
 var mask_textures = []
@@ -37,6 +38,8 @@ func _ready() -> void:
 	reset_position()
 
 	combat_manager.mask_changed.connect(_on_combat_mask_changed)
+	combat_manager.stealth_activated.connect(_on_stealth_activated)
+	combat_manager.stealth_deactivated.connect(_on_stealth_deactivated)
 
 	# Load mask textures
 	mask_textures = [
@@ -48,6 +51,7 @@ func _ready() -> void:
 	# Set initial mask
 	if mask_textures.size() > 0:
 		mask_sprite.texture = mask_textures[0]
+	original_collision_mask = collision_mask
 
 func reset_position() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
@@ -62,7 +66,6 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed(Inputs.CYCLE_MASK):
 		combat_manager.cycle_mask()
-		combat_manager.activate_mobility()
 
 	# Don't allow movement if locked (e.g., during UI interactions)
 	if movement_locked:
@@ -119,7 +122,8 @@ func _physics_process(delta: float) -> void:
 				spawn_melee_hitbox(shoot_direction)
 				fire_timer = FIRE_COOLDOWN
 			Masks.Type.MOBILITY:
-				pass
+				if combat_manager.try_activate_stealth():
+					fire_timer = FIRE_COOLDOWN
 
 	# Check for interact input
 	if Input.is_action_just_pressed(Inputs.INTERACT):
@@ -254,3 +258,20 @@ func _on_combat_mask_changed(mask_type: Masks.Type):
 		mask_ui.update_display(mask_type)
 
 	print("Player mask changed to: ", Masks.get_mask_name(mask_type))
+
+func _on_stealth_activated():
+	enable_enemy_phasing()
+
+func _on_stealth_deactivated():
+	disable_enemy_phasing()
+
+func enable_enemy_phasing():
+	# Disable collision with enemy layer (layer 4, which is bit 3 in 0-indexed)
+	# Enemy collision_layer = 141 = binary 10001101
+	# We need to turn off bits that would collide with enemies
+	# Since enemies are on multiple layers, we'll just disable the specific enemy bits
+	# Bit 0 (1), Bit 2 (4), Bit 3 (8), Bit 7 (128) = 141
+	collision_mask &= ~141
+
+func disable_enemy_phasing():
+	collision_mask = original_collision_mask
