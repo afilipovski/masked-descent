@@ -6,10 +6,10 @@
 [ext_resource type="FontFile" uid="uid://6irm4vqoi87n" path="res://assets/DungeonFont.ttf" id="2_dungeon_font"]
 [ext_resource type="Script" uid="uid://dora04h1ltgcp" path="res://scripts/game_over_ui.gd" id="2_game_over"]
 [ext_resource type="Script" uid="uid://xt5yq5022r3t" path="res://scripts/dungeon_level_ui.gd" id="2_level_ui"]
-[ext_resource type="PackedScene" uid="uid://bv8gx3r4k5lna" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
+[ext_resource type="PackedScene" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
 [ext_resource type="Script" uid="uid://c32twut0orgx4" path="res://scripts/score_ui.gd" id="2_score_ui"]
 [ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/player.gd" id="3_j7wrs"]
-[ext_resource type="Script" uid="uid://dk4t7c5bkmj33" path="res://scripts/level_flow.gd" id="4_level_flow"]
+[ext_resource type="Script" path="res://scripts/level_flow.gd" id="4_level_flow"]
 [ext_resource type="Texture2D" uid="uid://0rcyg17w1i88" path="res://assets/wall-n.png" id="4_wall_n"]
 [ext_resource type="Texture2D" uid="uid://bu510rq3khy0q" path="res://assets/main_character.png" id="5_04qyp"]
 [ext_resource type="Script" uid="uid://c7qk5anmpq1im" path="res://scripts/dungeon_generator.gd" id="5_o6xl0"]
@@ -151,14 +151,10 @@ text = "Level 1"
 script = ExtResource("2_level_ui")
 
 [node name="ScoreLabel" type="Label" parent="UI" unique_id=1034201738]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -1142.0
+offset_left = 10.0
 offset_top = 38.0
-offset_right = -1038.0
+offset_right = 148.0
 offset_bottom = 63.0
-grow_horizontal = 0
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_dungeon_font")
 theme_override_font_sizes/font_size = 24
