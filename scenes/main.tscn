@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://b7a76f07gyul1"]
 
+[ext_resource type="Texture2D" uid="uid://by36hkajvy4r7" path="res://assets/health_bar/health_bar_full.png" id="1_health_bar"]
+[ext_resource type="Script" uid="uid://bno744j0t4n17" path="res://scripts/ui/health_bar_ui.gd" id="1_health_bar_ui"]
 [ext_resource type="Texture2D" uid="uid://dpqgg2x88cm7h" path="res://assets/floor.png" id="1_o6xl0"]
 [ext_resource type="PackedScene" uid="uid://bylwq0ey4uygd" path="res://scenes/ui/minimap.tscn" id="1_tefeu"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
@@ -14,7 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://bu510rq3khy0q" path="res://assets/main_character.png" id="5_04qyp"]
 [ext_resource type="Script" uid="uid://c7qk5anmpq1im" path="res://scripts/dungeon_generator.gd" id="5_o6xl0"]
 [ext_resource type="Texture2D" uid="uid://b1nxaceg67pkb" path="res://assets/wall-s.png" id="5_wall_s"]
-[ext_resource type="PackedScene" uid="uid://c4n8f8uk1m84t" path="res://scenes/boss_room.tscn" id="6_boss_room"]
+[ext_resource type="PackedScene" path="res://scenes/boss_room.tscn" id="6_boss_room"]
 [ext_resource type="Texture2D" uid="uid://bqjw0titvxwbt" path="res://assets/wall-e.png" id="6_wall_e"]
 [ext_resource type="Texture2D" uid="uid://5wk2217drca7" path="res://assets/wall-w.png" id="7_wall_w"]
 [ext_resource type="Texture2D" uid="uid://clc2l7mydwmgc" path="res://assets/wall-corner-ne.png" id="8_wall_ne"]
@@ -23,6 +25,20 @@
 [ext_resource type="Texture2D" uid="uid://xeyhyvcoxa2r" path="res://assets/door.png" id="10_door"]
 [ext_resource type="AudioStream" uid="uid://bnhcxj4j1dra2" path="res://assets/music/door_open.ogg" id="18_jscy8"]
 [ext_resource type="Script" uid="uid://b8p6xnuppwxl4" path="res://scripts/ui/stealth_cooldown_bar.gd" id="20_yc10j"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jbj1t"]
+bg_color = Color(0.21176471, 0.21176471, 0.21176471, 0.80784315)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_red"]
+bg_color = Color(1, 0, 0, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0e48y"]
 texture = ExtResource("1_o6xl0")
@@ -103,13 +119,6 @@ sources/10 = SubResource("TileSetAtlasSource_yc10j")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_4vge2"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jbj1t"]
-bg_color = Color(0.21176471, 0.21176471, 0.21176471, 0.80784315)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_muem4"]
 bg_color = Color(0, 1, 1, 1)
 corner_radius_top_left = 2
@@ -130,10 +139,10 @@ anchor_right = 1.0
 offset_left = -40.0
 offset_bottom = 40.0
 grow_horizontal = 0
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
 
 [node name="Minimap" parent="UI/MarginContainer" unique_id=976864793 instance=ExtResource("1_tefeu")]
 layout_mode = 2
@@ -141,21 +150,55 @@ layout_mode = 2
 [node name="MaskInventory" parent="UI" unique_id=1103877401 instance=ExtResource("2_mask_inv")]
 
 [node name="DungeonLevelLabel" type="Label" parent="UI" unique_id=286731216]
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 150.0
-offset_bottom = 50.0
+offset_left = 7.0
+offset_top = 71.0
+offset_right = 147.0
+offset_bottom = 111.0
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_dungeon_font")
 theme_override_font_sizes/font_size = 24
 text = "Level 1"
 script = ExtResource("2_level_ui")
 
+[node name="HealthBarContainer" type="MarginContainer" parent="UI" unique_id=827690916]
+offset_left = -31.0
+offset_top = -7.0
+offset_right = 380.0
+offset_bottom = 79.0
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+script = ExtResource("1_health_bar_ui")
+
+[node name="HealthBarSprite" type="TextureRect" parent="UI/HealthBarContainer" unique_id=545113677]
+custom_minimum_size = Vector2(200, 30)
+layout_mode = 2
+texture = ExtResource("1_health_bar")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HealthProgress" type="ProgressBar" parent="UI/HealthBarContainer/HealthBarSprite" unique_id=247705913]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 95.0
+offset_top = 34.0
+offset_right = -50.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_jbj1t")
+theme_override_styles/fill = SubResource("StyleBoxFlat_health_red")
+value = 100.0
+show_percentage = false
+
 [node name="ScoreLabel" type="Label" parent="UI" unique_id=1034201738]
-offset_left = 10.0
-offset_top = 38.0
-offset_right = 148.0
-offset_bottom = 63.0
+offset_left = 268.0
+offset_top = 74.0
+offset_right = 408.0
+offset_bottom = 99.0
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_dungeon_font")
 theme_override_font_sizes/font_size = 24
