@@ -1,18 +1,18 @@
 extends Node2D
 class_name TreasureChest
 
-signal chest_opened(gems: Array[GemData])
+signal chest_opened
+signal powerup_selected(powerup: PowerupData)
 
-@export var gem_selection_ui_scene: PackedScene
 @export var is_opened: bool = false
-@export var gems_to_offer: int = 3
 @export var open_sound: AudioStream
 
 var interaction_area: Area2D
 var animated_sprite: AnimatedSprite2D
-var gem_selection_ui: GemSelectionUI
+var chest_ui: Control
 var player_nearby: bool = false
 var open_sound_player: AudioStreamPlayer2D
+var available_powerups: Array[PowerupData] = []
 
 func _ready():
 	add_to_group("interactables")
@@ -124,36 +124,165 @@ func open_chest():
 	elif animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("open"):
 		animated_sprite.play("open")
 
-	# Generate random gems
-	var available_gems = GemData.get_random_gems(gems_to_offer)
+	# Get all powerups to offer
+	available_powerups = PowerupData.get_all_powerups()
+	
+	# Show chest UI with powerups
+	_show_chest_ui()
 
-	# Show gem selection UI
-	_show_gem_selection(available_gems)
-
-func _show_gem_selection(gems: Array[GemData]):
+func _show_chest_ui():
 	# Create UI if it doesn't exist
-	if not gem_selection_ui:
-		# Create the UI programmatically since we don't have a scene file
-		gem_selection_ui = GemSelectionUI.new()
-
+	if not chest_ui:
+		chest_ui = _create_chest_ui()
+		
 		# Create a CanvasLayer to ensure UI renders above everything and ignores camera
 		var canvas_layer = CanvasLayer.new()
+		canvas_layer.name = "ChestUILayer"
 		canvas_layer.layer = 100  # High layer to render on top
 		get_tree().current_scene.add_child(canvas_layer)
-		canvas_layer.add_child(gem_selection_ui)
+		canvas_layer.add_child(chest_ui)
 
-		gem_selection_ui.gem_selected.connect(_on_gem_selected)
-		gem_selection_ui.selection_cancelled.connect(_on_selection_cancelled)
+	# Lock player movement
+	var players = get_tree().get_nodes_in_group("player")
+	if players.size() > 0:
+		players[0].lock_movement()
+	
+	chest_ui.show()
+	chest_opened.emit()
 
-	if gem_selection_ui:
-		gem_selection_ui.show_gem_selection(gems)
+func _create_chest_ui() -> Control:
+	var ui = Control.new()
+	ui.name = "ChestUI"
+	ui.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ui.hide()
+	
+	# Semi-transparent dark overlay
+	var overlay = ColorRect.new()
+	overlay.color = Color(0, 0, 0, 0.7)
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ui.add_child(overlay)
+	
+	# Get viewport size to center panel
+	var viewport_size = get_viewport().get_visible_rect().size
+	
+	# Main panel with dungeon aesthetic - wider for 3 buttons
+	var panel = Panel.new()
+	panel.size = Vector2(900, 500)
+	panel.position = Vector2((viewport_size.x - 900) / 2, (viewport_size.y - 500) / 2)
+	
+	# Dark stone-like background
+	var panel_style = StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.15, 0.12, 0.1)  # Dark brownish stone
+	panel_style.border_color = Color(0.3, 0.25, 0.2)  # Lighter stone border
+	panel_style.border_width_left = 4
+	panel_style.border_width_right = 4
+	panel_style.border_width_top = 4
+	panel_style.border_width_bottom = 4
+	panel_style.corner_radius_top_left = 8
+	panel_style.corner_radius_top_right = 8
+	panel_style.corner_radius_bottom_left = 8
+	panel_style.corner_radius_bottom_right = 8
+	panel.add_theme_stylebox_override("panel", panel_style)
+	
+	ui.add_child(panel)
+	
+	# Load dungeon font
+	var dungeon_font = load("res://assets/DungeonFont.ttf")
+	
+	# VBox for content
+	var vbox = VBoxContainer.new()
+	vbox.position = Vector2(40, 40)
+	vbox.size = Vector2(820, 420)
+	vbox.add_theme_constant_override("separation", 30)
+	panel.add_child(vbox)
+	
+	# Title
+	var title = Label.new()
+	title.text = "Choose a Powerup"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if dungeon_font:
+		title.add_theme_font_override("font", dungeon_font)
+	title.add_theme_font_size_override("font_size", 48)
+	title.add_theme_color_override("font_color", Color(0.9, 0.85, 0.7))  # Parchment color
+	vbox.add_child(title)
+	
+	# Powerup buttons container
+	var button_container = HBoxContainer.new()
+	button_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	button_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	button_container.add_theme_constant_override("separation", 20)
+	vbox.add_child(button_container)
+	
+	# Create a button for each powerup
+	for powerup in available_powerups:
+		var button = _create_powerup_button(powerup, dungeon_font)
+		button_container.add_child(button)
+	
+	# Close instruction
+	var close_label = Label.new()
+	close_label.text = "Press ESC to close"
+	close_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if dungeon_font:
+		close_label.add_theme_font_override("font", dungeon_font)
+	close_label.add_theme_font_size_override("font_size", 24)
+	close_label.add_theme_color_override("font_color", Color(0.6, 0.55, 0.4))
+	vbox.add_child(close_label)
+	
+	return ui
 
-func _on_gem_selected(gem: GemData):
-	print("Player selected: ", gem.gem_name)
-	chest_opened.emit([gem])
+func _create_powerup_button(powerup: PowerupData, font: Font) -> Button:
+	var button = Button.new()
+	button.custom_minimum_size = Vector2(240, 240)
+	
+	# Dark button style
+	var normal_style = StyleBoxFlat.new()
+	normal_style.bg_color = Color(0.2, 0.17, 0.15)
+	normal_style.border_color = Color(0.4, 0.35, 0.3)
+	normal_style.border_width_left = 3
+	normal_style.border_width_right = 3
+	normal_style.border_width_top = 3
+	normal_style.border_width_bottom = 3
+	normal_style.corner_radius_top_left = 6
+	normal_style.corner_radius_top_right = 6
+	normal_style.corner_radius_bottom_left = 6
+	normal_style.corner_radius_bottom_right = 6
+	
+	var hover_style = normal_style.duplicate()
+	hover_style.bg_color = Color(0.3, 0.25, 0.2)
+	hover_style.border_color = Color(0.6, 0.5, 0.4)
+	
+	button.add_theme_stylebox_override("normal", normal_style)
+	button.add_theme_stylebox_override("hover", hover_style)
+	button.add_theme_stylebox_override("pressed", hover_style)
+	
+	# Button text
+	button.text = powerup.icon_text + "\n\n" + powerup.display_name + "\n\n" + powerup.description
+	if font:
+		button.add_theme_font_override("font", font)
+	button.add_theme_font_size_override("font_size", 20)
+	button.add_theme_color_override("font_color", Color(0.9, 0.85, 0.7))
+	
+	# Connect button press
+	button.pressed.connect(_on_powerup_selected.bind(powerup))
+	
+	return button
 
-	# TODO: Add gem to player's mask inventory
-	# PlayerInventory.add_gem(gem)
+func _on_powerup_selected(powerup: PowerupData):
+	print("Player selected powerup: ", powerup.display_name)
+	powerup_selected.emit(powerup)
+	_close_chest_ui()
 
-func _on_selection_cancelled():
-	print("Player cancelled gem selection")
+func _input(event):
+	# Handle ESC key to close chest UI
+	if chest_ui and chest_ui.visible and event.is_action_pressed("ui_cancel"):
+		_close_chest_ui()
+		get_viewport().set_input_as_handled()
+
+func _close_chest_ui():
+	if chest_ui:
+		chest_ui.hide()
+		
+		# Unlock player movement
+		var players = get_tree().get_nodes_in_group("player")
+		if players.size() > 0:
+			players[0].unlock_movement()
