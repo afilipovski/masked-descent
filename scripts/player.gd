@@ -13,6 +13,8 @@ const DOOR_SOURCE = 9
 
 @export var max_health: int = 15
 @export var wall_collision_damage: int = 2
+@export var game_over_sound: AudioStream
+@export var game_over_sound_volume_db: float = 0.0
 
 @onready var mask_sprite = $MaskSprite
 
@@ -234,6 +236,26 @@ func die():
 	death_effect.process_mode = Node.PROCESS_MODE_ALWAYS # Keep playing during pause
 	get_parent().add_child(death_effect)
 	death_effect.global_position = global_position
+
+	# Play game over sound (if assigned). The player is set to continue
+	# processing during pause so the sound will finish even after pausing.
+	if game_over_sound:
+		var go_player: AudioStreamPlayer2D = AudioStreamPlayer2D.new()
+		go_player.stream = game_over_sound
+		go_player.volume_db = game_over_sound_volume_db
+		# Ensure the node continues to process during pause (match death effect usage)
+		go_player.process_mode = Node.PROCESS_MODE_ALWAYS
+		if AudioServer.get_bus_index("SFX") != -1:
+			go_player.bus = "SFX"
+
+		# Add to a stable parent so it isn't freed if this node is freed
+		var root_node: Node = get_parent()
+		if not root_node:
+			root_node = get_tree().get_root()
+		root_node.add_child(go_player)
+		go_player.global_position = global_position
+		go_player.play()
+		go_player.connect("finished", Callable(go_player, "queue_free"))
 
 	# Hide player sprite and mask
 	sprite.hide()

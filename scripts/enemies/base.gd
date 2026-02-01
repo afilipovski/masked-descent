@@ -8,6 +8,8 @@ class_name BaseEnemy
 @export var max_health: int = 3
 @export var death_effect_scene: PackedScene
 @export var damage_number_scene: PackedScene = preload("res://scenes/effects/damage_number.tscn")
+@export var hit_sound: AudioStream
+@export var hit_sound_volume_db: float = 0.0
 
 var player: Node2D
 var damage_timer: Timer
@@ -71,6 +73,21 @@ func setup_damage_timer():
 
 func take_damage(amount: int):
 	health -= amount
+	# Play a hit sound if assigned
+	if hit_sound:
+		var _player: AudioStreamPlayer2D = AudioStreamPlayer2D.new()
+		_player.stream = hit_sound
+		_player.volume_db = hit_sound_volume_db
+		if AudioServer.get_bus_index("SFX") != -1:
+			_player.bus = "SFX"
+
+		var root_node: Node = get_parent()
+		if not root_node:
+			root_node = get_tree().get_root()
+		root_node.add_child(_player)
+		_player.global_position = global_position
+		_player.play()
+		_player.connect("finished", Callable(_player, "queue_free"))
 	_show_damage_number(amount)
 	_flash_red()
 	_on_damage_taken(amount)

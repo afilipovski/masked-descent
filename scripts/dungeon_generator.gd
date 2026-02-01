@@ -44,16 +44,35 @@ signal dungeon_generated(rooms_data: Array[Rect2i], stairs_position: Vector2i, c
 signal door_opened()
 
 func _ready() -> void:
+	# Prefer an autoloaded AudioManager (checks both common names). If not
+	# present, create a local player and make it loop via the `finished` signal.
 	var audio_node = get_node_or_null("/root/AudioManager")
+	if not audio_node:
+		audio_node = get_node_or_null("/root/AudioManager")
+
 	if audio_node:
 		# AudioManager.play_music(stream, volume_db, loop)
-		audio_node.play_music(AMBIENCE, -6.0, true)
+		if audio_node.has_method("play_music"):
+			audio_node.play_music(AMBIENCE, -6.0, true)
+		else:
+			# If the autoload uses a different API, attempt a best-effort call
+			audio_node.call_deferred("play_music", AMBIENCE, -6.0, true)
 	else:
-		# fallback: create a local player if the autoload isn't set up
+		# fallback: create a local player if the autoload isn't set up and make
+		# it loop when finished.
 		var p := AudioStreamPlayer.new()
 		p.stream = AMBIENCE
 		p.volume_db = -6.0
+		# assign to Music bus if present
+		if AudioServer.get_bus_index("Music") != -1:
+			p.bus = "Music"
+
 		add_child(p)
+
+		# When finished, replay to simulate looping
+		if not p.is_connected("finished", Callable(p, "play")):
+			p.finished.connect(Callable(p, "play"))
+
 		p.play()
 
 	generate_dungeon()

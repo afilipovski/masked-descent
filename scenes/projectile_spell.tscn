@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cvhml3bqscuh2"]
 
 [ext_resource type="Script" uid="uid://dwee3snqflsaf" path="res://scripts/spell_projectile.gd" id="1_udihb"]
+[ext_resource type="AudioStream" uid="uid://b3xy7l1inxf16" path="res://assets/music/laser_bolt.mp3" id="2_2126a"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ejm5d"]
 
@@ -12,6 +13,8 @@ z_index = 10
 collision_layer = 8
 collision_mask = 5
 script = ExtResource("1_udihb")
+fire_sound = ExtResource("2_2126a")
+fire_sound_volume_db = 10.0
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=537457110]
 scale = Vector2(4, 4)
