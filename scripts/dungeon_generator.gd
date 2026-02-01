@@ -287,7 +287,8 @@ func get_random_position_in_room(room: Rect2i) -> Vector2i:
 		return get_room_center(room)
 
 func clear_existing_enemies():
-	var enemies = get_tree().get_nodes_in_group("enemies")
+	var enemies = get_tree().get_nodes_in_group(Groups.ENEMY)
+	print("Clearing ", enemies.size(), " enemies")
 	for enemy in enemies:
 		enemy.queue_free()
 

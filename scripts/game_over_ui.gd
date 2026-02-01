@@ -7,6 +7,7 @@ extends Control
 
 func _ready() -> void:
 	hide()
+	process_mode = Node.PROCESS_MODE_ALWAYS # Allow UI to work when paused
 	restart_button.pressed.connect(_on_restart_pressed)
 	main_menu_button.pressed.connect(_on_main_menu_pressed)
 
@@ -30,10 +31,15 @@ func show_game_over() -> void:
 func _on_restart_pressed() -> void:
 	hide()
 	GameState.reset_level()
-	get_tree().call_group(Groups.PLAYER, "reset_position")
+	
+	# Regenerate dungeon (which will clear enemies internally)
 	var tilemap = get_tree().get_first_node_in_group(Groups.TILEMAP)
 	if tilemap and tilemap.has_method("regenerate"):
 		tilemap.regenerate()
+	
+	# Reset player (which will unpause the game)
+	get_tree().call_group(Groups.PLAYER, "reset_position")
 
 func _on_main_menu_pressed() -> void:
+	get_tree().paused = false # Unpause before changing scenes
 	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")

@@ -3,6 +3,7 @@ extends CharacterBody2D
 const PROJECTILE_SPELL = preload("uid://cvhml3bqscuh2")
 const MELEE_HITBOX = preload("uid://bpgefom8c5e3c")
 const SWOOSH_ATTACK = preload("uid://dlnsqouc8xk2q")
+const DEATH_EFFECT = preload("res://scenes/death_effect.tscn")
 
 
 const SPEED = 200.0
@@ -28,6 +29,7 @@ var mask_textures = []
 @onready var combat_manager: CombatManager = CombatManager.new()
 @onready var sprite: Sprite2D = $Sprite2D
 var movement_locked: bool = false
+var is_dead: bool = false
 
 signal health_changed(new_health: int)
 signal player_died
@@ -61,8 +63,24 @@ func reset_position() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
 	if tilemap and tilemap.has_method("get_spawn_position"):
 		position = tilemap.get_spawn_position()
+	
+	# Reset player state
+	is_dead = false
+	health = max_health
+	sprite.show()
+	mask_sprite.show()
+	health_changed.emit(health)
+	
+	# Unpause the game
+	get_tree().paused = false
 
 func _physics_process(delta: float) -> void:
+	# Disable all input when dead
+	if is_dead:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
+
 	if _handle_knockback(delta):
 		move_and_slide()
 		_check_wall_collision_damage()
@@ -195,8 +213,22 @@ func take_damage(amount: int):
 
 func die():
 	print("Player died!")
+	is_dead = true
+	
+	# Spawn death effect at player position
+	var death_effect = DEATH_EFFECT.instantiate()
+	death_effect.process_mode = Node.PROCESS_MODE_ALWAYS # Keep playing during pause
+	get_parent().add_child(death_effect)
+	death_effect.global_position = global_position
+	
+	# Hide player sprite and mask
+	sprite.hide()
+	mask_sprite.hide()
+	
+	# Freeze the game
+	get_tree().paused = true
+	
 	player_died.emit()
-	health = max_health
 
 func _check_wall_collision_damage():
 	for i in get_slide_collision_count():
