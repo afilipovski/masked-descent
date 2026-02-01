@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://wrwp8dwxoa8n" path="res://assets/enemies/skeleton.png" id="1_uo8vp"]
 [ext_resource type="PackedScene" uid="uid://dlnsqouc8xk2q" path="res://scenes/effects/swoosh_attack.tscn" id="2_swoosh"]
 [ext_resource type="PackedScene" uid="uid://p7pbv3l0n55" path="res://scenes/death_effect.tscn" id="3_death"]
+[ext_resource type="AudioStream" uid="uid://c1unf5322p8vr" path="res://assets/music/skeleton_attack_hit.ogg" id="4_3mw36"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5365w"]
 atlas = ExtResource("1_uo8vp")
@@ -75,26 +76,27 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_hitbox"]
 radius = 12.0
 
-[node name="Skeleton" type="CharacterBody2D"]
+[node name="Skeleton" type="CharacterBody2D" unique_id=462981324]
 collision_layer = 141
 collision_mask = 141
 script = ExtResource("1_skeleton_script")
 attack_effect_scene = ExtResource("2_swoosh")
 death_effect_scene = ExtResource("3_death")
+hit_sound = ExtResource("4_3mw36")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1577963104]
 sprite_frames = SubResource("SpriteFrames_8kogo")
 animation = &"walk_down"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=343714265]
 position = Vector2(0, 4)
 shape = SubResource("CircleShape2D_body")
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="." unique_id=1507739624]
 collision_layer = 137
 collision_mask = 137
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1664975768]
 position = Vector2(0, 4)
 shape = SubResource("CircleShape2D_hitbox")
 

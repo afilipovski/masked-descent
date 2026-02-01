@@ -8,9 +8,10 @@
 [ext_resource type="FontFile" uid="uid://6irm4vqoi87n" path="res://assets/DungeonFont.ttf" id="2_dungeon_font"]
 [ext_resource type="Script" uid="uid://dora04h1ltgcp" path="res://scripts/game_over_ui.gd" id="2_game_over"]
 [ext_resource type="Script" uid="uid://xt5yq5022r3t" path="res://scripts/dungeon_level_ui.gd" id="2_level_ui"]
-[ext_resource type="PackedScene" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
+[ext_resource type="PackedScene" uid="uid://bv8gx3r4k5lna" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
 [ext_resource type="Script" uid="uid://c32twut0orgx4" path="res://scripts/score_ui.gd" id="2_score_ui"]
 [ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/player.gd" id="3_j7wrs"]
+[ext_resource type="AudioStream" uid="uid://b1fsysdltl1f8" path="res://assets/music/boss_fight.ogg" id="4_2f3dj"]
 [ext_resource type="Script" uid="uid://dk4t7c5bkmj33" path="res://scripts/level_flow.gd" id="4_level_flow"]
 [ext_resource type="Texture2D" uid="uid://0rcyg17w1i88" path="res://assets/wall-n.png" id="4_wall_n"]
 [ext_resource type="Texture2D" uid="uid://bu510rq3khy0q" path="res://assets/main_character.png" id="5_04qyp"]
@@ -132,6 +133,7 @@ corner_radius_bottom_left = 2
 script = ExtResource("4_level_flow")
 boss_room_scene = ExtResource("6_boss_room")
 boss_scene = ExtResource("5_boss_scene")
+boss_music = ExtResource("4_2f3dj")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=139768032]
 

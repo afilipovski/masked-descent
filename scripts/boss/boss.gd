@@ -5,6 +5,9 @@ extends CharacterBody2D
 
 signal boss_defeated
 
+@export var hit_sound: AudioStream
+@export var hit_sound_volume_db: float = 0.0
+
 @export var damage: int = 3
 @export var hitbox_radius: float = 24.0
 @export var damage_interval: float = 1.0
@@ -65,6 +68,23 @@ func _physics_process(delta):
 
 func take_damage(amount: int = 10):
 	var actual_damage = max(1, amount - DEF)
+
+	# Play hit sound for boss if assigned
+	if hit_sound and actual_damage > 0:
+		var _player = AudioStreamPlayer2D.new()
+		_player.stream = hit_sound
+		_player.volume_db = hit_sound_volume_db
+		if AudioServer.get_bus_index("SFX") != -1:
+			_player.bus = "SFX"
+
+		var root_node: Node = get_parent()
+		if not root_node:
+			root_node = get_tree().get_root()
+		root_node.add_child(_player)
+		_player.global_position = global_position
+		_player.play()
+		_player.connect("finished", Callable(_player, "queue_free"))
+
 	health -= actual_damage
 	_show_damage_number(actual_damage)
 	_flash_red()

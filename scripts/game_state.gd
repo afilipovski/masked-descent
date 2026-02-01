@@ -5,7 +5,7 @@ const SAVE_PATH = "user://high_score.save"
 var dungeon_level: int = 1
 var score: int = 0
 var high_score: int = 0
-const BOSS_LEVEL_INTERVAL: int = 5
+const BOSS_LEVEL_INTERVAL: int = 1
 
 signal level_changed(new_level: int)
 signal score_changed(new_score: int, points_added: int)
