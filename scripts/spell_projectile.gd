@@ -5,7 +5,7 @@ var speed = 220.0
 var lifetime = 1.2
 var max_distance = 500.0
 var traveled_distance = 0.0
-var damage = 10
+var damage = 2
 
 func set_direction(new_direction: Vector2) -> void:
 	direction = new_direction.normalized()

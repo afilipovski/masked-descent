@@ -3,18 +3,12 @@
 [ext_resource type="Script" uid="uid://cxvl5u3d55303" path="res://scripts/melee_hitbox.gd" id="1_147gh"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_badyc"]
-radius = 16.0
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_147gh"]
-size = Vector2(7, 7)
+radius = 32.0
 
 [node name="MeleeHitbox" type="Area2D" unique_id=1250717819]
 script = ExtResource("1_147gh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=759277418]
 shape = SubResource("CircleShape2D_badyc")
-
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=631952267]
-texture = SubResource("PlaceholderTexture2D_147gh")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

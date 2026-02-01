@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cs0uiq4hqgsgr"]
 
 [ext_resource type="Script" uid="uid://pjyhvkbqbarx" path="res://scripts/enemies/dwarf.gd" id="1_0g8kj"]
-[ext_resource type="PackedScene" path="res://scenes/effects/swoosh_attack.tscn" id="2_jgtmn"]
+[ext_resource type="PackedScene" uid="uid://dlnsqouc8xk2q" path="res://scenes/effects/swoosh_attack.tscn" id="2_jgtmn"]
 [ext_resource type="Texture2D" uid="uid://bia71o7pjfmc" path="res://assets/enemies/dwarf_animated.png" id="2_uspnt"]
 [ext_resource type="PackedScene" uid="uid://p7pbv3l0n55" path="res://scenes/death_effect.tscn" id="3_jgtmn"]
 

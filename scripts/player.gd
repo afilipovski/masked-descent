@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 const PROJECTILE_SPELL = preload("uid://cvhml3bqscuh2")
 const MELEE_HITBOX = preload("uid://bpgefom8c5e3c")
+const SWOOSH_ATTACK = preload("uid://dlnsqouc8xk2q")
 
 
 const SPEED = 200.0
@@ -225,6 +226,11 @@ func spawn_melee_hitbox(direction: Vector2) -> void:
 	var offset = direction.normalized() * 20
 	hitbox.global_position = global_position + offset
 	hitbox.rotation = direction.angle()
+
+	var swoosh = SWOOSH_ATTACK.instantiate()
+	get_parent().add_child(swoosh)
+	swoosh.global_position = global_position + offset
+	swoosh.set_direction(direction)
 
 func lock_movement():
 	movement_locked = true
