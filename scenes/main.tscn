@@ -6,14 +6,15 @@
 [ext_resource type="FontFile" uid="uid://6irm4vqoi87n" path="res://assets/DungeonFont.ttf" id="2_dungeon_font"]
 [ext_resource type="Script" uid="uid://dora04h1ltgcp" path="res://scripts/game_over_ui.gd" id="2_game_over"]
 [ext_resource type="Script" uid="uid://xt5yq5022r3t" path="res://scripts/dungeon_level_ui.gd" id="2_level_ui"]
-[ext_resource type="PackedScene" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
+[ext_resource type="PackedScene" uid="uid://bv8gx3r4k5lna" path="res://scenes/ui/mask_inventory.tscn" id="2_mask_inv"]
 [ext_resource type="Script" uid="uid://c32twut0orgx4" path="res://scripts/score_ui.gd" id="2_score_ui"]
 [ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/player.gd" id="3_j7wrs"]
+[ext_resource type="Script" uid="uid://dk4t7c5bkmj33" path="res://scripts/level_flow.gd" id="4_level_flow"]
 [ext_resource type="Texture2D" uid="uid://0rcyg17w1i88" path="res://assets/wall-n.png" id="4_wall_n"]
 [ext_resource type="Texture2D" uid="uid://bu510rq3khy0q" path="res://assets/main_character.png" id="5_04qyp"]
 [ext_resource type="Script" uid="uid://c7qk5anmpq1im" path="res://scripts/dungeon_generator.gd" id="5_o6xl0"]
 [ext_resource type="Texture2D" uid="uid://b1nxaceg67pkb" path="res://assets/wall-s.png" id="5_wall_s"]
-[ext_resource type="PackedScene" path="res://scenes/boss_room.tscn" id="6_tefeu"]
+[ext_resource type="PackedScene" uid="uid://c4n8f8uk1m84t" path="res://scenes/boss_room.tscn" id="6_boss_room"]
 [ext_resource type="Texture2D" uid="uid://bqjw0titvxwbt" path="res://assets/wall-e.png" id="6_wall_e"]
 [ext_resource type="Texture2D" uid="uid://5wk2217drca7" path="res://assets/wall-w.png" id="7_wall_w"]
 [ext_resource type="Texture2D" uid="uid://clc2l7mydwmgc" path="res://assets/wall-corner-ne.png" id="8_wall_ne"]
@@ -116,6 +117,8 @@ corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
 [node name="Root3" type="Node2D" unique_id=1359679254]
+script = ExtResource("4_level_flow")
+boss_room_scene = ExtResource("6_boss_room")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=139768032]
 
@@ -240,6 +243,7 @@ layer_0/tile_data = PackedInt32Array(0, 0, 0, -65536, 0, 0, -1, 0, 0, 65535, 0, 
 script = ExtResource("5_o6xl0")
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=41287422]
+z_index = 10
 collision_layer = 8
 collision_mask = 5
 script = ExtResource("3_j7wrs")
@@ -271,12 +275,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_muem4")
 show_percentage = false
 script = ExtResource("20_yc10j")
 
-[node name="BossRoom" parent="." unique_id=261575104 instance=ExtResource("6_tefeu")]
-
 [node name="Node2D" type="Node2D" parent="." unique_id=407149965]
-
-[node name="BossRoom2" parent="." unique_id=912229205 instance=ExtResource("6_tefeu")]
-position = Vector2(-67, 13)
 
 [connection signal="dungeon_generated" from="TileMap" to="UI/MarginContainer/Minimap" method="update_dungeon_data"]
 [connection signal="player_died" from="Player" to="UI/GameOverScreen" method="show_game_over"]

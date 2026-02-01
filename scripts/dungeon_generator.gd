@@ -48,6 +48,13 @@ func generate_dungeon():
 	door_open = false
 	total_enemies = 0
 	chest_position = Vector2i.ZERO
+	clear_existing_enemies()
+	clear_existing_chests()
+
+	if GameState.is_boss_level():
+		print("Boss level detected. Skipping dungeon generation.")
+		dungeon_generated.emit([], Vector2i.ZERO, [], Vector2i.ZERO)
+		return
 
 	fill_with_walls()
 
@@ -365,7 +372,8 @@ func clear_existing_chests():
 
 func regenerate():
 	generate_dungeon()
-	get_tree().call_group(Groups.PLAYER, "reset_position")
+	if not GameState.is_boss_level():
+		get_tree().call_group(Groups.PLAYER, "reset_position")
 
 func _on_enemy_died():
 	if door_open or not is_inside_tree():

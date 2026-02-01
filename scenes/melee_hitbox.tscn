@@ -6,6 +6,7 @@
 radius = 32.0
 
 [node name="MeleeHitbox" type="Area2D" unique_id=1250717819]
+z_index = 10
 script = ExtResource("1_147gh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=759277418]

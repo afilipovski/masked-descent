@@ -11,7 +11,7 @@ const FIRE_COOLDOWN = 0.5 # Seconds between shots
 const STAIRS_SOURCE = 2
 const DOOR_SOURCE = 9
 
-@export var max_health: int = 10
+@export var max_health: int = 100000
 @export var wall_collision_damage: int = 2
 
 @onready var mask_sprite = $MaskSprite

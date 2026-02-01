@@ -3,9 +3,15 @@ extends CharacterBody2D
 @onready var player: CharacterBody2D = get_tree().get_first_node_in_group("player")
 @onready var sprite: Sprite2D = $Sprite2D
 
+@export var damage: int = 3
+@export var hitbox_radius: float = 24.0
+@export var damage_interval: float = 1.0
+
 var direction: Vector2
 var player_detected: bool = false
 var DEF = 0
+var damage_timer: Timer
+var player_in_hitbox: bool = false
 
 var health = 100:
 	set(value):
@@ -18,6 +24,8 @@ var health = 100:
 			find_child("FiniteStateMachine").change_state("ArmorBuff")
 
 func _ready():
+	add_to_group(Groups.ENEMY)
+	_setup_hitbox()
 	set_physics_process(false)
 
 func _process(_delta):
@@ -48,8 +56,62 @@ func _physics_process(delta):
 
 	move_and_slide()
 
-func take_damage():
-	health -= 10 - DEF
+func take_damage(amount: int = 10):
+	health -= max(0, amount - DEF)
+
+func _setup_hitbox() -> void:
+	var hitbox = Area2D.new()
+	hitbox.name = "Hitbox"
+	hitbox.monitoring = true
+	hitbox.monitorable = true
+	hitbox.collision_layer = 0
+	hitbox.collision_mask = 1 << 3 # Player is on layer 8 (bit 3)
+	var shape = CollisionShape2D.new()
+	var circle = CircleShape2D.new()
+	circle.radius = hitbox_radius
+	shape.shape = circle
+	hitbox.add_child(shape)
+	add_child(hitbox)
+	hitbox.body_entered.connect(_on_hitbox_body_entered)
+	hitbox.body_exited.connect(_on_hitbox_body_exited)
+
+	damage_timer = Timer.new()
+	damage_timer.wait_time = damage_interval
+	damage_timer.one_shot = false
+	damage_timer.autostart = false
+	damage_timer.timeout.connect(_on_damage_timer_timeout)
+	add_child(damage_timer)
+
+func _on_hitbox_body_entered(body: Node2D) -> void:
+	if not body.is_in_group(Groups.PLAYER):
+		return
+	if not can_detect_player():
+		return
+	player_in_hitbox = true
+	_attack_player(body)
+	damage_timer.start()
+
+func _on_hitbox_body_exited(body: Node2D) -> void:
+	if body.is_in_group(Groups.PLAYER):
+		player_in_hitbox = false
+		damage_timer.stop()
+
+func _on_damage_timer_timeout() -> void:
+	if player_in_hitbox and player and can_detect_player():
+		_attack_player(player)
+
+func _attack_player(player_body: Node2D) -> void:
+	if player_body.has_method("take_damage"):
+		player_body.take_damage(damage)
+
+func can_detect_player() -> bool:
+	if not player:
+		return false
+	if player.has_node("CombatManager"):
+		var combat_manager = player.get_node("CombatManager") as CombatManager
+		if combat_manager and combat_manager.is_player_stealthed():
+			return false
+	return true
 
 func die():
 	GameState.add_score(50)

@@ -5,6 +5,7 @@ const SAVE_PATH = "user://high_score.save"
 var dungeon_level: int = 1
 var score: int = 0
 var high_score: int = 0
+const BOSS_LEVEL_INTERVAL: int = 5
 
 signal level_changed(new_level: int)
 signal score_changed(new_score: int)
@@ -22,6 +23,9 @@ func reset_level() -> void:
 func increment_level() -> void:
 	dungeon_level += 1
 	level_changed.emit(dungeon_level)
+
+func is_boss_level(level: int = dungeon_level) -> bool:
+	return BOSS_LEVEL_INTERVAL > 0 and level % BOSS_LEVEL_INTERVAL == 0
 
 func add_score(points: int) -> void:
 	score += points

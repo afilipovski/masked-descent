@@ -8,6 +8,7 @@
 size = Vector2(2, 2)
 
 [node name="Node2D" type="CharacterBody2D" unique_id=1320933461]
+z_index = 10
 collision_layer = 8
 collision_mask = 5
 script = ExtResource("1_udihb")
