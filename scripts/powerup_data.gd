@@ -18,15 +18,15 @@ func _init(p_type: Type):
 		Type.RANGED_DAMAGE:
 			display_name = "Power Shot"
 			description = "Increases ranged damage"
-			icon_text = "🏹"
+			icon_text = ">"
 		Type.MELEE_DAMAGE:
 			display_name = "Brutal Strike"
 			description = "Increases melee damage"
-			icon_text = "⚔️"
+			icon_text = "X"
 		Type.STEALTH_COOLDOWN:
 			display_name = "Swift Shadows"
 			description = "Faster invisibility cooldown"
-			icon_text = "👻"
+			icon_text = "*"
 
 static func get_all_powerups() -> Array[PowerupData]:
 	var powerups: Array[PowerupData] = []

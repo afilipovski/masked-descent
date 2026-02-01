@@ -186,6 +186,9 @@ func _create_chest_ui() -> Control:
 	
 	ui.add_child(panel)
 	
+	# Load dungeon font
+	var dungeon_font = load("res://assets/DungeonFont.ttf")
+	
 	# VBox for content
 	var vbox = VBoxContainer.new()
 	vbox.position = Vector2(40, 40)
@@ -197,6 +200,8 @@ func _create_chest_ui() -> Control:
 	var title = Label.new()
 	title.text = "Choose a Powerup"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if dungeon_font:
+		title.add_theme_font_override("font", dungeon_font)
 	title.add_theme_font_size_override("font_size", 48)
 	title.add_theme_color_override("font_color", Color(0.9, 0.85, 0.7))  # Parchment color
 	vbox.add_child(title)
@@ -210,20 +215,22 @@ func _create_chest_ui() -> Control:
 	
 	# Create a button for each powerup
 	for powerup in available_powerups:
-		var button = _create_powerup_button(powerup)
+		var button = _create_powerup_button(powerup, dungeon_font)
 		button_container.add_child(button)
 	
 	# Close instruction
 	var close_label = Label.new()
 	close_label.text = "Press ESC to close"
 	close_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if dungeon_font:
+		close_label.add_theme_font_override("font", dungeon_font)
 	close_label.add_theme_font_size_override("font_size", 24)
 	close_label.add_theme_color_override("font_color", Color(0.6, 0.55, 0.4))
 	vbox.add_child(close_label)
 	
 	return ui
 
-func _create_powerup_button(powerup: PowerupData) -> Button:
+func _create_powerup_button(powerup: PowerupData, font: Font) -> Button:
 	var button = Button.new()
 	button.custom_minimum_size = Vector2(240, 240)
 	
@@ -250,6 +257,8 @@ func _create_powerup_button(powerup: PowerupData) -> Button:
 	
 	# Button text
 	button.text = powerup.icon_text + "\n\n" + powerup.display_name + "\n\n" + powerup.description
+	if font:
+		button.add_theme_font_override("font", font)
 	button.add_theme_font_size_override("font_size", 20)
 	button.add_theme_color_override("font_color", Color(0.9, 0.85, 0.7))
 	
