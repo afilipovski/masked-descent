@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cynxdhglwt2aa" path="res://scripts/interactables/treasure_chest.gd" id="1_2gubq"]
 [ext_resource type="Texture2D" uid="uid://cfonhkhtxh56a" path="res://assets/interactables/chest.png" id="2_fm1cr"]
 [ext_resource type="PackedScene" uid="uid://gernjnrb8k4q" path="res://scenes/ui/gem_selection.tscn" id="2_ih6cu"]
+[ext_resource type="AudioStream" uid="uid://ct4e8baxw0612" path="res://assets/music/chest_open.ogg" id="3_uw0it"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ih6cu"]
 atlas = ExtResource("2_fm1cr")
@@ -40,6 +41,7 @@ radius = 26.305893
 [node name="TreasureChest" type="Node2D" unique_id=451690977]
 script = ExtResource("1_2gubq")
 gem_selection_ui_scene = ExtResource("2_ih6cu")
+open_sound = ExtResource("3_uw0it")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1210712968]
 sprite_frames = SubResource("SpriteFrames_2gubq")

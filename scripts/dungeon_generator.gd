@@ -25,6 +25,9 @@ const ATLAS_COORDS = Vector2i(0, 0)
 
 const ENEMY_SCENE = preload("res://scenes/enemies/dwarf.tscn")
 const CHEST_SCENE = preload("res://scenes/interactables/treasure_chest.tscn")
+const AMBIENCE := preload("res://assets/music/background_music.ogg")
+@export var door_open_sound: AudioStream
+
 # Alternative: Load at runtime to debug
 # var CHEST_SCENE = load("res://scenes/interactables/treasure_chest.tscn")
 
@@ -38,7 +41,19 @@ var chest_position: Vector2i = Vector2i.ZERO
 signal dungeon_generated(rooms_data: Array[Rect2i], stairs_position: Vector2i, connections: Array[Vector2i], chest_pos: Vector2i)
 signal door_opened()
 
-func _ready():
+func _ready() -> void:
+	var audio_node = get_node_or_null("/root/AudioManager")
+	if audio_node:
+		# AudioManager.play_music(stream, volume_db, loop)
+		audio_node.play_music(AMBIENCE, -6.0, true)
+	else:
+		# fallback: create a local player if the autoload isn't set up
+		var p := AudioStreamPlayer.new()
+		p.stream = AMBIENCE
+		p.volume_db = -6.0
+		add_child(p)
+		p.play()
+
 	generate_dungeon()
 
 func generate_dungeon():
@@ -395,6 +410,23 @@ func open_door():
 	door_open = true
 	# Replace door with stairs
 	set_cell(0, door_position, STAIRS_SOURCE, ATLAS_COORDS)
+	# Play door open sound (positional)
+	if door_open_sound:
+		# try AudioManager autoload first
+		var audio_node = get_node_or_null("/root/AudioManager")
+		var world_pos = map_to_local(door_position)
+		if audio_node and audio_node.has_method("play_sfx_at"):
+			audio_node.play_sfx_at(door_open_sound, world_pos)
+		else:
+			var p := AudioStreamPlayer2D.new()
+			p.stream = door_open_sound
+			p.bus = "SFX"
+			p.position = world_pos
+			add_child(p)
+			p.play()
+			# free when finished
+			if not p.is_connected("finished", Callable(p, "queue_free")):
+				p.finished.connect(Callable(p, "queue_free"))
 	print("Door opened! Stairs revealed at: ", door_position)
 	door_opened.emit()
 
