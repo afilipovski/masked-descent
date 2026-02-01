@@ -367,7 +367,7 @@ func regenerate():
 	get_tree().call_group(Groups.PLAYER, "reset_position")
 
 func _on_enemy_died():
-	if door_open:
+	if door_open or not is_inside_tree():
 		return
 
 	var enemies_alive = get_tree().get_nodes_in_group(Groups.ENEMY).size()
