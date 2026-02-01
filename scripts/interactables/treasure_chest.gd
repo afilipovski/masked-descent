@@ -6,11 +6,13 @@ signal chest_opened(gems: Array[GemData])
 @export var gem_selection_ui_scene: PackedScene
 @export var is_opened: bool = false
 @export var gems_to_offer: int = 3
+@export var open_sound: AudioStream
 
 var interaction_area: Area2D
 var animated_sprite: AnimatedSprite2D
 var gem_selection_ui: GemSelectionUI
 var player_nearby: bool = false
+var open_sound_player: AudioStreamPlayer2D
 
 func _ready():
 	add_to_group("interactables")
@@ -69,6 +71,19 @@ func _setup_chest_nodes():
 		else:
 			animated_sprite.play("closed")
 
+	# Create or find audio players for open/close SFX
+	open_sound_player = get_node_or_null("OpenSound")
+	if not open_sound_player:
+		open_sound_player = AudioStreamPlayer2D.new()
+		open_sound_player.name = "OpenSound"
+		# Route to SFX bus if it exists; otherwise default
+		open_sound_player.bus = "SFX"
+		add_child(open_sound_player)
+
+	# Assign exported streams if set
+	if open_sound:
+		open_sound_player.stream = open_sound
+
 func _on_player_entered(body: Node2D):
 	print("Body entered interaction area: ", body.name, " groups: ", body.get_groups())
 	if body.is_in_group("player"):
@@ -96,6 +111,10 @@ func open_chest():
 		return
 
 	is_opened = true
+
+	# Play open sound (positional)
+	if open_sound_player:
+		open_sound_player.play()
 
 	# Play opening animation
 	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("opening"):
@@ -138,4 +157,3 @@ func _on_gem_selected(gem: GemData):
 
 func _on_selection_cancelled():
 	print("Player cancelled gem selection")
-	# Could re-close the chest or keep it open

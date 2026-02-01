@@ -11,7 +11,7 @@ const FIRE_COOLDOWN = 0.5 # Seconds between shots
 const STAIRS_SOURCE = 2
 const DOOR_SOURCE = 9
 
-@export var max_health: int = 100
+@export var max_health: int = 15
 @export var wall_collision_damage: int = 2
 
 @onready var mask_sprite = $MaskSprite
@@ -67,14 +67,14 @@ func reset_position() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
 	if tilemap and tilemap.has_method("get_spawn_position"):
 		position = tilemap.get_spawn_position()
-	
+
 	# Reset player state
 	is_dead = false
 	health = max_health
 	sprite.show()
 	mask_sprite.show()
 	health_changed.emit(health)
-	
+
 	# Unpause the game
 	get_tree().paused = false
 
@@ -221,20 +221,20 @@ func take_damage(amount: int):
 func die():
 	print("Player died!")
 	is_dead = true
-	
+
 	# Spawn death effect at player position
 	var death_effect = DEATH_EFFECT.instantiate()
 	death_effect.process_mode = Node.PROCESS_MODE_ALWAYS # Keep playing during pause
 	get_parent().add_child(death_effect)
 	death_effect.global_position = global_position
-	
+
 	# Hide player sprite and mask
 	sprite.hide()
 	mask_sprite.hide()
-	
+
 	# Freeze the game
 	get_tree().paused = true
-	
+
 	player_died.emit()
 
 func _check_wall_collision_damage():

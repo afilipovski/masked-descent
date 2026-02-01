@@ -24,7 +24,12 @@ const DOOR_SOURCE = 9
 const ATLAS_COORDS = Vector2i(0, 0)
 
 const ENEMY_SCENE = preload("res://scenes/enemies/dwarf.tscn")
+const SKELETON_SCENE = preload("res://scenes/enemies/skeleton.tscn")
+const SLIME_SCENE = preload("res://scenes/enemies/slime.tscn")
 const CHEST_SCENE = preload("res://scenes/interactables/treasure_chest.tscn")
+const AMBIENCE := preload("res://assets/music/background_music.ogg")
+@export var door_open_sound: AudioStream
+
 # Alternative: Load at runtime to debug
 # var CHEST_SCENE = load("res://scenes/interactables/treasure_chest.tscn")
 
@@ -38,7 +43,19 @@ var chest_position: Vector2i = Vector2i.ZERO
 signal dungeon_generated(rooms_data: Array[Rect2i], stairs_position: Vector2i, connections: Array[Vector2i], chest_pos: Vector2i)
 signal door_opened()
 
-func _ready():
+func _ready() -> void:
+	var audio_node = get_node_or_null("/root/AudioManager")
+	if audio_node:
+		# AudioManager.play_music(stream, volume_db, loop)
+		audio_node.play_music(AMBIENCE, -6.0, true)
+	else:
+		# fallback: create a local player if the autoload isn't set up
+		var p := AudioStreamPlayer.new()
+		p.stream = AMBIENCE
+		p.volume_db = -6.0
+		add_child(p)
+		p.play()
+
 	generate_dungeon()
 
 func generate_dungeon():
@@ -280,8 +297,102 @@ func spawn_enemies() -> int:
 			get_parent().add_child.call_deferred(enemy_instance)
 			enemies_spawned += 1
 
-	print("Total enemies spawned: ", enemies_spawned)
+	# Spawn skeletons in groups across available rooms
+	var skeleton_count = spawn_skeletons(6)
+	enemies_spawned += skeleton_count
+
+	# Spawn slimes individually across rooms
+	var slime_count = spawn_slimes(3)
+	enemies_spawned += slime_count
+
+	print("Total enemies spawned: ", enemies_spawned, " (including ", skeleton_count, " skeletons and ", slime_count, " slimes)")
 	return enemies_spawned
+
+func spawn_skeletons(count: int) -> int:
+	# Get available rooms (skip first and last)
+	var available_rooms = range(1, rooms.size() - 1)
+	if available_rooms.size() == 0:
+		print("No available rooms to spawn skeletons")
+		return 0
+
+	# Create groups with at least 2-3 skeletons each
+	var min_group_size = 2
+	var max_groups = min(available_rooms.size(), count / min_group_size)
+	var num_groups = max(2, max_groups)  # At least 2 groups
+
+	print("Spawning ", count, " skeletons in ", num_groups, " groups")
+
+	# Distribute skeletons across groups (ensure each group has at least min_group_size)
+	var groups = []
+	var remaining_skeletons = count
+
+	# Give minimum skeletons to each group first
+	for i in range(num_groups):
+		groups.append(min_group_size)
+		remaining_skeletons -= min_group_size
+
+	# Distribute remaining skeletons
+	var dist_index = 0
+	while remaining_skeletons > 0:
+		groups[dist_index] += 1
+		remaining_skeletons -= 1
+		dist_index = (dist_index + 1) % num_groups
+
+	# Select random rooms for groups
+	var selected_rooms = []
+	var available_copy = available_rooms.duplicate()
+	for i in range(num_groups):
+		if available_copy.size() == 0:
+			break
+		var room_index = available_copy[randi() % available_copy.size()]
+		selected_rooms.append(room_index)
+		available_copy.erase(room_index)  # Remove to avoid duplicate rooms
+
+	var skeleton_counter = 0
+	for group_index in range(min(num_groups, selected_rooms.size())):
+		var room_index = selected_rooms[group_index]
+		var room = rooms[room_index]
+		var skeletons_in_group = groups[group_index]
+
+		print("Group ", group_index + 1, ": Spawning ", skeletons_in_group, " skeletons together in room ", room_index)
+
+		for i in range(skeletons_in_group):
+			var skeleton_instance = SKELETON_SCENE.instantiate()
+			var spawn_pos = get_random_position_in_room(room)
+			skeleton_instance.global_position = map_to_local(spawn_pos)
+			skeleton_instance.tree_exited.connect(_on_enemy_died)
+			get_parent().add_child.call_deferred(skeleton_instance)
+
+			skeleton_counter += 1
+			print("Spawned skeleton ", skeleton_counter, " at position ", spawn_pos)
+
+	return skeleton_counter
+
+func spawn_slimes(count: int) -> int:
+	# Get available rooms (skip first and last)
+	var available_rooms = range(1, rooms.size() - 1)
+	if available_rooms.size() == 0:
+		print("No available rooms to spawn slimes")
+		return 0
+
+	print("Spawning ", count, " slimes individually across rooms")
+
+	var slime_counter = 0
+	for i in range(count):
+		# Pick a random room for each slime
+		var room_index = available_rooms[randi() % available_rooms.size()]
+		var room = rooms[room_index]
+
+		var slime_instance = SLIME_SCENE.instantiate()
+		var spawn_pos = get_random_position_in_room(room)
+		slime_instance.global_position = map_to_local(spawn_pos)
+		slime_instance.tree_exited.connect(_on_enemy_died)
+		get_parent().add_child.call_deferred(slime_instance)
+
+		slime_counter += 1
+		print("Spawned slime ", slime_counter, " in room ", room_index, " at position ", spawn_pos)
+
+	return slime_counter
 
 func get_random_position_in_room(room: Rect2i) -> Vector2i:
 	# Collect all floor tiles in the room
@@ -406,6 +517,23 @@ func open_door():
 	door_open = true
 	# Replace door with stairs
 	set_cell(0, door_position, STAIRS_SOURCE, ATLAS_COORDS)
+	# Play door open sound (positional)
+	if door_open_sound:
+		# try AudioManager autoload first
+		var audio_node = get_node_or_null("/root/AudioManager")
+		var world_pos = map_to_local(door_position)
+		if audio_node and audio_node.has_method("play_sfx_at"):
+			audio_node.play_sfx_at(door_open_sound, world_pos)
+		else:
+			var p := AudioStreamPlayer2D.new()
+			p.stream = door_open_sound
+			p.bus = "SFX"
+			p.position = world_pos
+			add_child(p)
+			p.play()
+			# free when finished
+			if not p.is_connected("finished", Callable(p, "queue_free")):
+				p.finished.connect(Callable(p, "queue_free"))
 	print("Door opened! Stairs revealed at: ", door_position)
 	door_opened.emit()
 

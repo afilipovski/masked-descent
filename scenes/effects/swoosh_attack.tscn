@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://dlnsqouc8xk2q"]
 
-[ext_resource type="Texture2D" uid="uid://xl2mqy07k10h" path="res://assets/swoosh.png" id="1_t4mlk"]
+[ext_resource type="Texture2D" uid="uid://c4aufdoyvxkhn" path="res://assets/swoosh.png" id="1_t4mlk"]
 [ext_resource type="Script" uid="uid://bm3hlk1nxp57b" path="res://scripts/effects/swoosh_attack.gd" id="1_ufuca"]
+[ext_resource type="AudioStream" uid="uid://b06fxot8mgibx" path="res://assets/music/swoosh_attack.ogg" id="2_704t1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ufuca"]
 atlas = ExtResource("1_t4mlk")
@@ -48,6 +49,7 @@ animations = [{
 
 [node name="SwooshAttack" type="Node2D" unique_id=429362576]
 script = ExtResource("1_ufuca")
+swoosh_sound = ExtResource("2_704t1")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=798222364]
 sprite_frames = SubResource("SpriteFrames_ajhkx")

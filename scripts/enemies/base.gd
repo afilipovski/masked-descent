@@ -7,15 +7,21 @@ class_name BaseEnemy
 @export var health: int = 3
 @export var max_health: int = 3
 @export var death_effect_scene: PackedScene
+@export var damage_number_scene: PackedScene = preload("res://scenes/effects/damage_number.tscn")
 
 var player: Node2D
 var damage_timer: Timer
 var player_in_hitbox: bool = false
+var original_modulate: Color
 
 func _ready():
 	add_to_group(Groups.ENEMY)
 	setup_damage_timer()
 	_animate_enemy()
+	# Store original color for flicker effect
+	var sprite = $AnimatedSprite2D
+	if sprite:
+		original_modulate = sprite.modulate
 	_on_ready()
 
 func _on_ready():
@@ -65,12 +71,35 @@ func setup_damage_timer():
 
 func take_damage(amount: int):
 	health -= amount
+	_show_damage_number(amount)
+	_flash_red()
 	_on_damage_taken(amount)
 	if health <= 0:
 		die()
 
 func _on_damage_taken(_amount: int):
 	pass
+
+func _show_damage_number(amount: int):
+	if !damage_number_scene:
+		return
+	
+	var damage_number = damage_number_scene.instantiate()
+	get_parent().add_child(damage_number)
+	damage_number.global_position = global_position + Vector2(0, -20)
+	damage_number.set_damage(amount)
+
+func _flash_red():
+	var sprite = $AnimatedSprite2D
+	if !sprite:
+		return
+	
+	# Flash red briefly
+	sprite.modulate = Color.RED
+	
+	# Create tween to return to normal color
+	var tween = create_tween()
+	tween.tween_property(sprite, "modulate", original_modulate, 0.15)
 
 func die():
 	_on_death()
