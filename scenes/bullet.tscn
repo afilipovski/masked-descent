@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://beenxo0abgyb0"]
 
-[ext_resource type="Script" uid="uid://cfihb46a0f3vq" path="res://scenes/bullet.gd" id="1_y25gk"]
+[ext_resource type="Script" uid="uid://cfihb46a0f3vq" path="res://scripts/boss/bullet.gd" id="1_y25gk"]
 [ext_resource type="Texture2D" uid="uid://durkixdchrgla" path="res://assets/Mecha-stone Golem 0.1/weapon PNG/arm_projectile_glowing.png" id="2_l5glv"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y25gk"]
@@ -57,6 +57,8 @@ animations = [{
 size = Vector2(30, 10)
 
 [node name="bullet" type="Area2D" unique_id=223004450]
+z_index = 10
+scale = Vector2(2, 2)
 script = ExtResource("1_y25gk")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=911642275]

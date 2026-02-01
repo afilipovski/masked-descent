@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://cnku5dbhjp2u0"]
+[gd_scene format=3 uid="uid://cnku5dbhjp2u0"]
 
 [ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_main_menu"]
 [ext_resource type="FontFile" uid="uid://6irm4vqoi87n" path="res://assets/DungeonFont.ttf" id="2_dungeon_font"]

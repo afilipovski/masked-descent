@@ -3,6 +3,8 @@ extends CharacterBody2D
 @onready var player: CharacterBody2D = get_tree().get_first_node_in_group("player")
 @onready var sprite: Sprite2D = $Sprite2D
 
+signal boss_defeated
+
 @export var damage: int = 3
 @export var hitbox_radius: float = 24.0
 @export var damage_interval: float = 1.0
@@ -20,7 +22,7 @@ var health = 100:
 		if value <= 0:
 			find_child("FiniteStateMachine").change_state("Death")
 		elif value <= 100 / 2 and DEF == 0:
-			DEF = 5
+			DEF = 2
 			find_child("FiniteStateMachine").change_state("ArmorBuff")
 
 func _ready():
@@ -115,4 +117,9 @@ func can_detect_player() -> bool:
 
 func die():
 	GameState.add_score(50)
+	var player_node = get_tree().get_first_node_in_group(Groups.PLAYER)
+	if player_node and player_node.has_method("unlock_mask"):
+		var texture = load("res://assets/boss_mask.png")
+		player_node.unlock_mask(Masks.Type.BOSS, texture)
+	boss_defeated.emit()
 	queue_free()

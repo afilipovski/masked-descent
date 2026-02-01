@@ -22,11 +22,16 @@ func transition():
 	var distance = character.direction.length()
 
 	print(distance)
-	if distance < 50:
+	if distance < 130:
 		get_parent().change_state("MeleeAttack")
-	elif distance >= 50 and distance <= 130:
-		get_parent().change_state("Dash")
-	elif distance > 130:
+	elif distance >= 130 and distance <= 180:
+		var chance = randi() % 2
+		match chance:
+			0:
+				get_parent().change_state("Dash")
+			1:
+				get_parent().change_state("Dash")
+	elif distance > 170:
 		var chance = randi() % 2
 		match chance:
 			0:

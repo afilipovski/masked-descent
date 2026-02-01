@@ -5,13 +5,13 @@ const MELEE_HITBOX = preload("uid://bpgefom8c5e3c")
 const SWOOSH_ATTACK = preload("uid://dlnsqouc8xk2q")
 const DEATH_EFFECT = preload("res://scenes/death_effect.tscn")
 
-
+const BOSS_LASER_COOLDOWN = 2
 const SPEED = 200.0
 const FIRE_COOLDOWN = 0.5 # Seconds between shots
 const STAIRS_SOURCE = 2
 const DOOR_SOURCE = 9
 
-@export var max_health: int = 100000
+@export var max_health: int = 100
 @export var wall_collision_damage: int = 2
 
 @onready var mask_sprite = $MaskSprite
@@ -52,12 +52,16 @@ func _ready() -> void:
 		load("res://assets/mask_2.png"),
 		load("res://assets/mask_3.png")
 	]
+	while mask_textures.size() <= Masks.Type.BOSS:
+		mask_textures.append(null)
 
 	# Set initial mask
-	if mask_textures.size() > 0:
-		mask_sprite.texture = mask_textures[0]
+	_on_combat_mask_changed(combat_manager.current_mask)
 	original_collision_layer = collision_layer
 	original_collision_mask = collision_mask
+
+func _grant_start_boss_mask() -> void:
+	unlock_mask(Masks.Type.BOSS, load("res://assets/boss_mask.png"))
 
 func reset_position() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
@@ -142,6 +146,9 @@ func _physics_process(delta: float) -> void:
 			Masks.Type.MOBILITY:
 				if combat_manager.try_activate_stealth():
 					fire_timer = FIRE_COOLDOWN
+			Masks.Type.BOSS:
+				spawn_boss_laser(shoot_direction)
+				fire_timer = BOSS_LASER_COOLDOWN
 
 	# Check for interact input
 	if Input.is_action_just_pressed(Inputs.INTERACT):
@@ -268,6 +275,20 @@ func spawn_melee_hitbox(direction: Vector2) -> void:
 	swoosh.set_direction(direction)
 	swoosh.scale = Vector2(combo_scale, combo_scale)
 
+func spawn_boss_laser(direction: Vector2) -> void:
+	var attack = Node2D.new()
+	attack.set_script(load("res://scripts/boss_laser_attack.gd"))
+	attack.boss_scene = load("res://scenes/boss.tscn")
+	attack.global_position = global_position
+	attack.direction = direction.normalized()
+	get_parent().add_child(attack)
+	lock_movement()
+	if attack.has_signal("finished"):
+		attack.connect("finished", Callable(self, "_on_boss_laser_finished"))
+
+func _on_boss_laser_finished() -> void:
+	unlock_movement()
+
 func lock_movement():
 	movement_locked = true
 
@@ -299,6 +320,18 @@ func _on_combat_mask_changed(mask_type: Masks.Type):
 		mask_ui.update_display(mask_type)
 
 	print("Player mask changed to: ", Masks.get_mask_name(mask_type))
+
+func unlock_mask(mask_type: Masks.Type, texture: Texture2D) -> void:
+	combat_manager.unlock_mask(mask_type)
+	var idx = mask_type as int
+	while mask_textures.size() <= idx:
+		mask_textures.append(null)
+	mask_textures[idx] = texture
+	var mask_ui = get_parent().get_node_or_null("UI/MaskInventory")
+	if mask_ui and mask_ui.has_method("add_mask_texture"):
+		mask_ui.add_mask_texture(mask_type, texture)
+	_on_combat_mask_changed(combat_manager.current_mask)
+	print("Unlocked mask: ", Masks.get_mask_name(mask_type))
 
 func _on_stealth_activated():
 	enable_enemy_phasing()
