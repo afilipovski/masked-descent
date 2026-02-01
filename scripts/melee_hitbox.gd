@@ -1,7 +1,7 @@
 extends Area2D
 class_name MeleeHitbox
 
-@export var damage: int = 3
+var damage: int = 3
 @export var lifetime: float = 0.15
 
 var _time_left: float = 0.0

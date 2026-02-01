@@ -279,7 +279,7 @@ func get_random_position_in_room(room: Rect2i) -> Vector2i:
 			var pos = Vector2i(x, y)
 			if get_cell_source_id(0, pos) == FLOOR_SOURCE:
 				floor_tiles.append(pos)
-	
+
 	# Return random floor tile, or fallback to room center if no floor found
 	if floor_tiles.size() > 0:
 		return floor_tiles[randi() % floor_tiles.size()]

@@ -109,6 +109,20 @@ func reset_melee_combo() -> void:
     melee_combo_count = 0
     melee_combo_timer = 0.0
 
+func get_melee_damage() -> int:
+    match melee_combo_count:
+        1: return 3
+        2: return 4
+        3: return 6
+        _: return 3
+
+func get_melee_scale() -> float:
+    match melee_combo_count:
+        1: return 1.0
+        2: return 1.3
+        3: return 1.6
+        _: return 1.0
+
 func get_current_mask_name() -> String:
     return Masks.get_mask_name(current_mask)
 

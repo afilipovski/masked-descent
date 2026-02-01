@@ -253,16 +253,20 @@ func apply_knockback(force: Vector2):
 
 func spawn_melee_hitbox(direction: Vector2) -> void:
 	var hitbox = MELEE_HITBOX.instantiate()
-	get_parent().add_child(hitbox)
-
+	var combo_damage = combat_manager.get_melee_damage()
+	var combo_scale = combat_manager.get_melee_scale()
 	var offset = direction.normalized() * 20
+	var swoosh = SWOOSH_ATTACK.instantiate()
+
+	get_parent().add_child(hitbox)
+	get_parent().add_child(swoosh)
+	hitbox.damage = combo_damage
+	hitbox.scale = Vector2(combo_scale, combo_scale)
 	hitbox.global_position = global_position + offset
 	hitbox.rotation = direction.angle()
-
-	var swoosh = SWOOSH_ATTACK.instantiate()
-	get_parent().add_child(swoosh)
 	swoosh.global_position = global_position + offset
 	swoosh.set_direction(direction)
+	swoosh.scale = Vector2(combo_scale, combo_scale)
 
 func lock_movement():
 	movement_locked = true
