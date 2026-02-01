@@ -20,5 +20,5 @@ func _on_exit_pressed() -> void:
 func update_high_score_display() -> void:
 	high_score_label.text = "High Score: %d" % GameState.high_score
 
-func _on_high_score_changed(new_high_score: int) -> void:
+func _on_high_score_changed(_new_high_score: int) -> void:
 	update_high_score_display()

@@ -39,6 +39,8 @@ func save_high_score() -> void:
 	if file:
 		file.store_32(high_score)
 		file.close()
+	else:
+		push_error("Failed to save high score to %s" % SAVE_PATH)
 
 func load_high_score() -> void:
 	if FileAccess.file_exists(SAVE_PATH):
@@ -47,3 +49,5 @@ func load_high_score() -> void:
 			high_score = file.get_32()
 			file.close()
 			high_score_changed.emit(high_score)
+		else:
+			push_error("Failed to load high score from %s" % SAVE_PATH)
