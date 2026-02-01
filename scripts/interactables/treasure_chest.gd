@@ -232,7 +232,7 @@ func _create_chest_ui() -> Control:
 
 func _create_powerup_button(powerup: PowerupData, font: Font) -> Button:
 	var button = Button.new()
-	button.custom_minimum_size = Vector2(240, 240)
+	button.custom_minimum_size = Vector2(240, 280)
 	
 	# Dark button style
 	var normal_style = StyleBoxFlat.new()
@@ -255,12 +255,43 @@ func _create_powerup_button(powerup: PowerupData, font: Font) -> Button:
 	button.add_theme_stylebox_override("hover", hover_style)
 	button.add_theme_stylebox_override("pressed", hover_style)
 	
-	# Button text
-	button.text = powerup.icon_text + "\n\n" + powerup.display_name + "\n\n" + powerup.description
+	# Create vertical container for icon and text
+	var vbox = VBoxContainer.new()
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 10)
+	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	button.add_child(vbox)
+	
+	# Add icon texture
+	if powerup.icon_texture:
+		var icon = TextureRect.new()
+		icon.texture = powerup.icon_texture
+		icon.custom_minimum_size = Vector2(80, 80)
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		vbox.add_child(icon)
+	
+	# Add name label
+	var name_label = Label.new()
+	name_label.text = powerup.display_name
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if font:
-		button.add_theme_font_override("font", font)
-	button.add_theme_font_size_override("font_size", 20)
-	button.add_theme_color_override("font_color", Color(0.9, 0.85, 0.7))
+		name_label.add_theme_font_override("font", font)
+	name_label.add_theme_font_size_override("font_size", 24)
+	name_label.add_theme_color_override("font_color", Color(0.9, 0.85, 0.7))
+	vbox.add_child(name_label)
+	
+	# Add description label
+	var desc_label = Label.new()
+	desc_label.text = powerup.description
+	desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	desc_label.custom_minimum_size = Vector2(220, 0)
+	if font:
+		desc_label.add_theme_font_override("font", font)
+	desc_label.add_theme_font_size_override("font_size", 16)
+	desc_label.add_theme_color_override("font_color", Color(0.7, 0.65, 0.5))
+	vbox.add_child(desc_label)
 	
 	# Connect button press
 	button.pressed.connect(_on_powerup_selected.bind(powerup))
