@@ -20,7 +20,7 @@ var stealth_cooldown_timer: float = 0.0
 const STEALTH_DURATION: float = 1.0
 const STEALTH_SPEED_MULTIPLIER: float = 1.5
 const STEALTH_OPACITY: float = 0.3
-const STEALTH_COOLDOWN: float = 3.0
+var STEALTH_COOLDOWN: float = 3.0  # Changed to var so it can be modified by powerups
 
 func _ready() -> void:
     set_process(true)

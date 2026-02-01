@@ -27,6 +27,7 @@ var original_collision_layer: int = 0
 # Mask textures
 var mask_textures = []
 @onready var combat_manager: CombatManager = CombatManager.new()
+@onready var powerup_manager: PowerupManager = PowerupManager.new()
 @onready var sprite: Sprite2D = $Sprite2D
 var movement_locked: bool = false
 var is_dead: bool = false
@@ -37,8 +38,10 @@ signal player_died
 func _ready() -> void:
 	add_to_group(Groups.PLAYER)
 	combat_manager.name = "CombatManager"
+	powerup_manager.name = "PowerupManager"
 
 	add_child(combat_manager)
+	add_child(powerup_manager)
 	health = max_health
 	reset_position()
 
@@ -166,6 +169,10 @@ func shoot(direction: Vector2) -> void:
 
 	var spawn_offset = direction.normalized() * 20
 	projectile.global_position = global_position + spawn_offset
+	
+	# Set projectile damage from powerup manager
+	if "damage" in projectile:
+		projectile.damage = powerup_manager.get_ranged_damage()
 
 	if projectile.has_method("set_direction"):
 		projectile.set_direction(direction)
@@ -253,7 +260,7 @@ func apply_knockback(force: Vector2):
 
 func spawn_melee_hitbox(direction: Vector2) -> void:
 	var hitbox = MELEE_HITBOX.instantiate()
-	var combo_damage = combat_manager.get_melee_damage()
+	var combo_damage = powerup_manager.get_melee_damage(combat_manager.melee_combo_count)
 	var combo_scale = combat_manager.get_melee_scale()
 	var offset = direction.normalized() * 20
 	var swoosh = SWOOSH_ATTACK.instantiate()
@@ -284,6 +291,9 @@ func _handle_interact_input():
 			if interactable.has_method("open_chest"):
 				if not interactable.is_opened:
 					print("Opening chest...")
+					# Connect to powerup selection if not already connected
+					if not interactable.powerup_selected.is_connected(_on_powerup_selected):
+						interactable.powerup_selected.connect(_on_powerup_selected)
 					interactable.open_chest()
 				else:
 					print("Chest is already opened")
@@ -305,6 +315,14 @@ func _on_stealth_activated():
 
 func _on_stealth_deactivated():
 	disable_enemy_phasing()
+
+func _on_powerup_selected(powerup: PowerupData):
+	print("Applying powerup: ", powerup.display_name)
+	powerup_manager.apply_powerup(powerup)
+	
+	# Update combat manager cooldown if stealth powerup was selected
+	if powerup.type == PowerupData.Type.STEALTH_COOLDOWN:
+		combat_manager.STEALTH_COOLDOWN = powerup_manager.get_stealth_cooldown()
 
 func enable_enemy_phasing():
 	# Remove player from physics layers so enemies can't detect us
