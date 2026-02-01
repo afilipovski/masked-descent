@@ -6,12 +6,14 @@ extends CharacterBody2D
 @export var damage: int = 3
 @export var hitbox_radius: float = 24.0
 @export var damage_interval: float = 1.0
+@export var damage_number_scene: PackedScene = preload("res://scenes/effects/damage_number.tscn")
 
 var direction: Vector2
 var player_detected: bool = false
 var DEF = 0
 var damage_timer: Timer
 var player_in_hitbox: bool = false
+var original_modulate: Color
 
 var health = 100:
 	set(value):
@@ -27,6 +29,9 @@ func _ready():
 	add_to_group(Groups.ENEMY)
 	_setup_hitbox()
 	set_physics_process(false)
+	# Store original color for flicker effect
+	if sprite:
+		original_modulate = sprite.modulate
 
 func _process(_delta):
 	if player == null:
@@ -57,7 +62,30 @@ func _physics_process(delta):
 	move_and_slide()
 
 func take_damage(amount: int = 10):
-	health -= max(0, amount - DEF)
+	var actual_damage = max(0, amount - DEF)
+	health -= actual_damage
+	_show_damage_number(actual_damage)
+	_flash_red()
+
+func _show_damage_number(amount: int):
+	if !damage_number_scene or amount <= 0:
+		return
+	
+	var damage_number = damage_number_scene.instantiate()
+	get_parent().add_child(damage_number)
+	damage_number.global_position = global_position + Vector2(0, -40)
+	damage_number.set_damage(amount)
+
+func _flash_red():
+	if !sprite:
+		return
+	
+	# Flash red briefly
+	sprite.modulate = Color.RED
+	
+	# Create tween to return to normal color
+	var tween = create_tween()
+	tween.tween_property(sprite, "modulate", original_modulate, 0.15)
 
 func _setup_hitbox() -> void:
 	var hitbox = Area2D.new()
