@@ -9,6 +9,8 @@ func _ready() -> void:
 	_time_left = lifetime
 	monitoring = true
 	monitorable = true
+	# Detect both default enemy layer (bit 0) and boss layer (bit 2).
+	collision_mask = (1 << 0) | (1 << 2)
 
 func _process(delta: float) -> void:
 	_time_left -= delta
