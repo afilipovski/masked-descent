@@ -310,11 +310,12 @@ _data = {
 [sub_resource type="CircleShape2D" id="CircleShape2D_jncid"]
 radius = 140.0
 
-[node name="Node2D" type="Node2D" unique_id=1861257543]
+[node name="Node2D2" type="Node2D" unique_id=1861257543]
 
 [node name="boss" type="CharacterBody2D" parent="." unique_id=39052010]
 collision_layer = 4
 collision_mask = 15
+safe_margin = 2.615
 script = ExtResource("1_2cdgk")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="boss" unique_id=482710018]

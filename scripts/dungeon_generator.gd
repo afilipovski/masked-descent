@@ -70,7 +70,12 @@ func generate_dungeon():
 
 	if GameState.is_boss_level():
 		print("Boss level detected. Skipping dungeon generation.")
-		dungeon_generated.emit([], Vector2i.ZERO, [], Vector2i.ZERO)
+		dungeon_generated.emit(
+			[] as Array[Rect2i],
+			Vector2i.ZERO,
+			[] as Array[Vector2i],
+			Vector2i.ZERO
+		)
 		return
 
 	fill_with_walls()
@@ -408,7 +413,13 @@ func clear_existing_enemies():
 	var enemies = get_tree().get_nodes_in_group(Groups.ENEMY)
 	print("Clearing ", enemies.size(), " enemies")
 	for enemy in enemies:
+		if GameState.is_boss_level() and _is_boss_enemy(enemy):
+			continue
 		enemy.queue_free()
+
+func _is_boss_enemy(enemy: Node) -> bool:
+	var script = enemy.get_script()
+	return script != null and script.resource_path == "res://scripts/boss/boss.gd"
 
 func spawn_chest_and_emit_signal():
 	spawn_chest()

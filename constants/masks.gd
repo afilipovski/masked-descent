@@ -3,7 +3,8 @@ class_name Masks
 enum Type {
     MELEE,
     RANGED,
-    MOBILITY
+    MOBILITY,
+    BOSS
 }
 
 const MASK_DATA = {
@@ -21,6 +22,11 @@ const MASK_DATA = {
         "name": "Mobility Mask",
         "can_attack": false,
         "attack_type": "stealth"
+    },
+    Type.BOSS: {
+        "name": "Boss Mask",
+        "can_attack": true,
+        "attack_type": "boss_laser"
     }
 }
 

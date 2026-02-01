@@ -1,7 +1,7 @@
 extends State
 
-const EXIT_DISTANCE := 50.0
-const ENTER_DISTANCE := 30.0
+const EXIT_DISTANCE := 120
+const ENTER_DISTANCE := 100
 
 func enter():
 	super.enter()

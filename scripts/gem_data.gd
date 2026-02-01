@@ -40,4 +40,3 @@ static func get_random_gems(count: int = 3) -> Array[GemData]:
 		gems.append(available_gems[i])
 
 	return gems
-
