@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dlnsqouc8xk2q" path="res://scenes/effects/swoosh_attack.tscn" id="2_jgtmn"]
 [ext_resource type="Texture2D" uid="uid://bia71o7pjfmc" path="res://assets/enemies/dwarf_animated.png" id="2_uspnt"]
 [ext_resource type="PackedScene" uid="uid://p7pbv3l0n55" path="res://scenes/death_effect.tscn" id="3_jgtmn"]
+[ext_resource type="AudioStream" uid="uid://bqpsr3a8yg1ke" path="res://assets/music/attack_hit.ogg" id="4_6d54j"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eid3i"]
 atlas = ExtResource("2_uspnt")
@@ -81,6 +82,7 @@ collision_mask = 141
 script = ExtResource("1_0g8kj")
 attack_effect_scene = ExtResource("2_jgtmn")
 death_effect_scene = ExtResource("3_jgtmn")
+hit_sound = ExtResource("4_6d54j")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=879989605]
 sprite_frames = SubResource("SpriteFrames_pcix0")

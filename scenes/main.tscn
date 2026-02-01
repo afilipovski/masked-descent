@@ -26,6 +26,7 @@
 [ext_resource type="Texture2D" uid="uid://xeyhyvcoxa2r" path="res://assets/door.png" id="10_door"]
 [ext_resource type="AudioStream" uid="uid://bnhcxj4j1dra2" path="res://assets/music/door_open.ogg" id="18_jscy8"]
 [ext_resource type="Script" uid="uid://b8p6xnuppwxl4" path="res://scripts/ui/stealth_cooldown_bar.gd" id="20_yc10j"]
+[ext_resource type="AudioStream" uid="uid://cd3qlv65551w0" path="res://assets/music/game_over.ogg" id="24_2wyq8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jbj1t"]
 bg_color = Color(0.21176471, 0.21176471, 0.21176471, 0.80784315)
@@ -310,6 +311,7 @@ z_index = 10
 collision_layer = 8
 collision_mask = 5
 script = ExtResource("3_j7wrs")
+game_over_sound = ExtResource("24_2wyq8")
 
 [node name="Sprite2D" type="Sprite2D" parent="Player" unique_id=1880422211]
 texture = ExtResource("5_04qyp")
