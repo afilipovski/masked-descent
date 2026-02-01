@@ -104,8 +104,8 @@ func _find_boss(root: Node) -> Node2D:
 
 func _bind_boss_signals(boss: Node2D) -> void:
 	if boss.has_signal("boss_defeated"):
-		if not boss.is_connected("boss_defeated", Callable(self, "_on_boss_defeated")):
-			boss.connect("boss_defeated", Callable(self, "_on_boss_defeated"))
+		if not boss.is_connected("boss_defeated", Callable(self , "_on_boss_defeated")):
+			boss.connect("boss_defeated", Callable(self , "_on_boss_defeated"))
 
 func _on_boss_defeated() -> void:
 	if player and player.has_method("unlock_mask"):
@@ -124,6 +124,12 @@ func _advance_after_boss_delay() -> void:
 func _move_player_to_boss_spawn() -> void:
 	if not player or boss_rooms.is_empty():
 		return
+
+	# Reset player health and state (same as regular level transitions)
+	if player.has_method("reset_position"):
+		player.reset_position()
+
+	# Override position to boss spawn
 	var spawn_pos = _get_room_spawn_position(boss_rooms[0])
 	player.global_position = spawn_pos
 

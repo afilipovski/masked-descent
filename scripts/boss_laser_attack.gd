@@ -15,6 +15,7 @@ var _pivot: Node2D
 
 func _ready() -> void:
 	if boss_scene == null:
+		finished.emit()
 		queue_free()
 		return
 	_setup_boss_visual()
@@ -59,7 +60,9 @@ func _play_laser_sequence() -> void:
 
 	if _animation_player.has_animation("laser"):
 		_animation_player.play("laser")
-		_apply_laser_damage_over_time(_animation_player.get_animation("laser").length)
+		# Delay damage by 1 second to let laser become visible first
+		await get_tree().create_timer(1.0).timeout
+		_apply_laser_damage_over_time(_animation_player.get_animation("laser").length - 1.0)
 		await _animation_player.animation_finished
 
 func _apply_laser_damage_over_time(duration: float) -> void:

@@ -178,7 +178,7 @@ func shoot(direction: Vector2) -> void:
 
 	var spawn_offset = direction.normalized() * 20
 	projectile.global_position = global_position + spawn_offset
-	
+
 	# Set projectile damage from powerup manager
 	if "damage" in projectile:
 		projectile.damage = powerup_manager.get_ranged_damage()
@@ -310,10 +310,20 @@ func spawn_boss_laser(direction: Vector2) -> void:
 	attack.boss_scene = load("res://scenes/boss.tscn")
 	attack.global_position = global_position
 	attack.direction = direction.normalized()
+
+	# Connect signal before adding to tree
+	if attack.has_signal("finished"):
+		attack.connect("finished", Callable(self , "_on_boss_laser_finished"))
+
 	get_parent().add_child(attack)
 	lock_movement()
-	if attack.has_signal("finished"):
-		attack.connect("finished", Callable(self, "_on_boss_laser_finished"))
+
+	# Safety timeout to unlock movement after 5 seconds
+	get_tree().create_timer(5.0).timeout.connect(func():
+		if movement_locked:
+			print("Boss laser timeout - unlocking movement")
+			unlock_movement()
+	)
 
 func _on_boss_laser_finished() -> void:
 	unlock_movement()
@@ -374,7 +384,7 @@ func _on_stealth_deactivated():
 func _on_powerup_selected(powerup: PowerupData):
 	print("Applying powerup: ", powerup.display_name)
 	powerup_manager.apply_powerup(powerup)
-	
+
 	# Update combat manager cooldown if stealth powerup was selected
 	if powerup.type == PowerupData.Type.STEALTH_COOLDOWN:
 		combat_manager.STEALTH_COOLDOWN = powerup_manager.get_stealth_cooldown()

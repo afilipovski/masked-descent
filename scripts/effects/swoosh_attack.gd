@@ -5,6 +5,7 @@ extends Node2D
 var _swoosh_player: AudioStreamPlayer2D
 
 func _ready():
+	z_index = 15
 	var animated_sprite = $AnimatedSprite2D
 	if animated_sprite:
 		animated_sprite.play("swoosh")
@@ -27,7 +28,7 @@ func _ready():
 
 	# Backup timer in case animation signal fails
 	var timer = Timer.new()
-	timer.wait_time = 1.0  # 1 second backup
+	timer.wait_time = 1.0 # 1 second backup
 	timer.one_shot = true
 	timer.timeout.connect(_on_timer_timeout)
 	add_child(timer)
