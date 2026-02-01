@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://b7a76f07gyul1"]
+[gd_scene format=3 uid="uid://bf2sfnoewqbj2"]
 
 [ext_resource type="Texture2D" uid="uid://b5x71iuusdvnu" path="res://assets/floor-test.png" id="1_4vge2"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
-[ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/character_body_2d.gd" id="3_503t6"]
+[ext_resource type="Script" uid="uid://cg3nobg4uifa" path="res://scripts/player.gd" id="3_503t6"]
 [ext_resource type="Texture2D" uid="uid://bu510rq3khy0q" path="res://assets/main_character.png" id="3_vqwjj"]
 [ext_resource type="PackedScene" uid="uid://cs0uiq4hqgsgr" path="res://scenes/enemies/dwarf.tscn" id="5_503t6"]
 [ext_resource type="PackedScene" uid="uid://cvywpxd7v2p8d" path="res://scenes/interactables/treasure_chest.tscn" id="6_mous7"]
@@ -26,7 +26,7 @@ sources/1 = SubResource("TileSetAtlasSource_epypp")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_4vge2"]
 
-[node name="Root" type="Node2D" unique_id=1359679254]
+[node name="Root2" type="Node2D" unique_id=1359679254]
 
 [node name="TileMap" type="TileMap" parent="." unique_id=1103315701]
 tile_set = SubResource("TileSet_epypp")

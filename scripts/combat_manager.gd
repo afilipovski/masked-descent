@@ -3,6 +3,8 @@ class_name CombatManager
 
 signal mask_changed(new_mask: Masks.Type)
 signal attack_performed(attack_type: String)
+signal stealth_activated
+signal stealth_deactivated
 
 var current_mask := Masks.Type.RANGED
 var mask_list: Array[Masks.Type] = [Masks.Type.MELEE, Masks.Type.RANGED, Masks.Type.MOBILITY]
@@ -14,9 +16,11 @@ const MELEE_COMBO_WINDOW: float = 0.8 # Time window to continue combo
 
 var is_stealthed: bool = false
 var stealth_timer: float = 0.0
+var stealth_cooldown_timer: float = 0.0
 const STEALTH_DURATION: float = 1.0
 const STEALTH_SPEED_MULTIPLIER: float = 1.5
 const STEALTH_OPACITY: float = 0.3
+const STEALTH_COOLDOWN: float = 3.0
 
 func _ready() -> void:
     set_process(true)
@@ -31,6 +35,9 @@ func _process(delta: float) -> void:
         stealth_timer -= delta
         if stealth_timer <= 0:
             end_stealth()
+
+    if stealth_cooldown_timer > 0:
+        stealth_cooldown_timer -= delta
 
 func cycle_mask() -> void:
     current_mask_index = (current_mask_index + 1) % mask_list.size()
@@ -74,24 +81,29 @@ func perform_ranged_attack(player: Node2D, direction: Vector2) -> void:
     # This is just for tracking/validation
     print("Ranged attack fired")
 
-func activate_mobility() -> void:
+func try_activate_stealth() -> bool:
     if current_mask != Masks.Type.MOBILITY:
-        return
+        return false
 
     if is_stealthed:
-        return
+        return false
+
+    if stealth_cooldown_timer > 0:
+        return false
 
     start_stealth()
+    return true
 
 func start_stealth() -> void:
     is_stealthed = true
     stealth_timer = STEALTH_DURATION
-    print("Stealth activated!")
+    stealth_activated.emit()
 
 func end_stealth() -> void:
     is_stealthed = false
     stealth_timer = 0.0
-    print("Stealth ended")
+    stealth_cooldown_timer = STEALTH_COOLDOWN
+    stealth_deactivated.emit()
 
 func reset_melee_combo() -> void:
     melee_combo_count = 0
@@ -109,3 +121,6 @@ func get_opacity() -> float:
     if is_stealthed:
         return STEALTH_OPACITY
     return 1.0
+
+func is_player_stealthed() -> bool:
+    return is_stealthed

@@ -24,6 +24,12 @@ func _process(_delta):
 	if player == null:
 		return
 
+	# Check if player is stealthed - lose detection
+	if player_detected and player.has_node("CombatManager"):
+		var combat_manager = player.get_node("CombatManager") as CombatManager
+		if combat_manager and combat_manager.is_player_stealthed():
+			player_detected = false
+
 	direction = player.global_position - global_position
 
 	if direction.x < 0:

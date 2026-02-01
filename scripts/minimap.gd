@@ -175,13 +175,11 @@ func _on_door_opened():
 	queue_redraw()
 
 func _draw_chest():
-	print("_draw_chest called with chest_position: ", chest_position)
 	if chest_position == Vector2i.ZERO:
 		print("Chest position is zero, not drawing")
 		return
 
 	var chest_minimap_pos = dungeon_to_minimap(Vector2(chest_position))
-	print("Chest minimap position: ", chest_minimap_pos)
 
 	# Draw chest as a square
 	var chest_size = 6.0 # Made it bigger for visibility
@@ -191,7 +189,6 @@ func _draw_chest():
 	)
 	draw_rect(chest_rect, chest_color, true)
 	draw_rect(chest_rect, Color.BLACK, false, 1.0) # Border
-	print("Drew chest rectangle at: ", chest_rect)
 
 func _draw_player():
 	if not player or not tilemap:

@@ -5,7 +5,6 @@ const MELEE_HITBOX = preload("uid://bpgefom8c5e3c")
 
 
 const SPEED = 200.0
-const SPRINT_MULTIPLIER = 1.8
 const FIRE_COOLDOWN = 0.5 # Seconds between shots
 const STAIRS_SOURCE = 2
 const DOOR_SOURCE = 9
@@ -20,6 +19,8 @@ var fire_timer = 0.0 # Time elapsed since last shot
 
 var knockback_velocity: Vector2 = Vector2.ZERO
 var knockback_friction: float = 800.0
+var original_collision_mask: int = 0
+var original_collision_layer: int = 0
 
 # Mask textures
 var mask_textures = []
@@ -32,9 +33,15 @@ signal player_died
 
 func _ready() -> void:
 	add_to_group(Groups.PLAYER)
+	combat_manager.name = "CombatManager"
+
 	add_child(combat_manager)
 	health = max_health
 	reset_position()
+
+	combat_manager.mask_changed.connect(_on_combat_mask_changed)
+	combat_manager.stealth_activated.connect(_on_stealth_activated)
+	combat_manager.stealth_deactivated.connect(_on_stealth_deactivated)
 
 	# Load mask textures
 	mask_textures = [
@@ -46,6 +53,8 @@ func _ready() -> void:
 	# Set initial mask
 	if mask_textures.size() > 0:
 		mask_sprite.texture = mask_textures[0]
+	original_collision_layer = collision_layer
+	original_collision_mask = collision_mask
 
 func reset_position() -> void:
 	var tilemap = get_parent().get_node_or_null("TileMap")
@@ -60,7 +69,6 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed(Inputs.CYCLE_MASK):
 		combat_manager.cycle_mask()
-		combat_manager.activate_mobility()
 
 	# Don't allow movement if locked (e.g., during UI interactions)
 	if movement_locked:
@@ -75,11 +83,7 @@ func _physics_process(delta: float) -> void:
 		Inputs.MOVE_DOWN
 	)
 
-	var current_speed = SPEED
-	if Input.is_action_pressed(Inputs.SPRINT):
-		current_speed *= SPRINT_MULTIPLIER
-
-	current_speed *= combat_manager.get_speed_multiplier()
+	var current_speed = SPEED * combat_manager.get_speed_multiplier()
 
 	if direction != Vector2.ZERO:
 		velocity = direction * current_speed
@@ -117,7 +121,8 @@ func _physics_process(delta: float) -> void:
 				spawn_melee_hitbox(shoot_direction)
 				fire_timer = FIRE_COOLDOWN
 			Masks.Type.MOBILITY:
-				pass
+				if combat_manager.try_activate_stealth():
+					fire_timer = FIRE_COOLDOWN
 
 	# Check for interact input
 	if Input.is_action_just_pressed(Inputs.INTERACT):
@@ -213,11 +218,6 @@ func _check_wall_collision_damage():
 func apply_knockback(force: Vector2):
 	knockback_velocity = force
 
-func _on_mask_changed(mask_index: int):
-	if mask_index >= 0 and mask_index < mask_textures.size():
-		mask_sprite.texture = mask_textures[mask_index]
-		print("Player mask changed to: ", mask_index)
-
 func spawn_melee_hitbox(direction: Vector2) -> void:
 	var hitbox = MELEE_HITBOX.instantiate()
 	get_parent().add_child(hitbox)
@@ -246,3 +246,30 @@ func _handle_interact_input():
 				else:
 					print("Chest is already opened")
 			break
+
+func _on_combat_mask_changed(mask_type: Masks.Type):
+	var mask_index = mask_type as int
+	if mask_index >= 0 and mask_index < mask_textures.size():
+		mask_sprite.texture = mask_textures[mask_index]
+
+	var mask_ui = get_parent().get_node_or_null("UI/MaskInventory")
+	if mask_ui and mask_ui.has_method("update_display"):
+		mask_ui.update_display(mask_type)
+
+	print("Player mask changed to: ", Masks.get_mask_name(mask_type))
+
+func _on_stealth_activated():
+	enable_enemy_phasing()
+
+func _on_stealth_deactivated():
+	disable_enemy_phasing()
+
+func enable_enemy_phasing():
+	# Remove player from physics layers so enemies can't detect us
+	# Player is on layer 8 (bit 3), enemies check for layer 8
+	collision_layer = 0 # Remove from all collision layers
+	collision_mask &= ~4 # Also stop colliding with enemy layer (layer 3 = bit 2)
+
+func disable_enemy_phasing():
+	collision_layer = original_collision_layer
+	collision_mask = original_collision_mask
