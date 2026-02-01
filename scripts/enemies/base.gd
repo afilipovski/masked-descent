@@ -26,6 +26,8 @@ func _physics_process(_delta: float) -> void:
 		find_player()
 		return
 
+	_update_hitbox_detection()
+
 	_update_movement(_delta)
 	move_and_slide()
 
@@ -33,12 +35,16 @@ func _update_movement(_delta: float):
 	chase_player()
 
 func find_player():
-	var players = get_tree().get_nodes_in_group("player")
+	var players = get_tree().get_nodes_in_group(Groups.PLAYER)
 	if players.size() > 0:
 		player = players[0]
 
 func chase_player():
 	if not player:
+		return
+
+	if not can_detect_player():
+		velocity = Vector2.ZERO
 		return
 
 	var distance_to_player = global_position.distance_to(player.global_position)
@@ -83,7 +89,11 @@ func _on_death():
 
 func _on_hitbox_body_entered(body: Node2D):
 	print("Hitbox detected body: ", body.name, " groups: ", body.get_groups())
-	if body.is_in_group("player"):
+	if body.is_in_group(Groups.PLAYER):
+		if not can_detect_player():
+			print("Cannot detect player due to stealth")
+			return
+
 		print("Player entered hitbox!")
 		player_in_hitbox = true
 		_attack_player(body)
@@ -93,12 +103,17 @@ func _on_hitbox_body_entered(body: Node2D):
 
 func _on_hitbox_body_exited(body: Node2D):
 	print("Hitbox body exited: ", body.name)
-	if body.is_in_group("player"):
+	if body.is_in_group(Groups.PLAYER):
 		player_in_hitbox = false
 		damage_timer.stop()
 
 func _on_damage_timer_timeout():
 	if player_in_hitbox and player:
+		if not can_detect_player():
+			damage_timer.stop()
+			player_in_hitbox = false
+			return
+
 		_attack_player(player)
 
 func _attack_player(player_body: Node2D):
@@ -108,6 +123,41 @@ func _attack_player(player_body: Node2D):
 func deal_damage_to_player(player_body: Node2D):
 	if player_body.has_method("take_damage"):
 		player_body.take_damage(damage)
+
+func can_detect_player() -> bool:
+	if not player:
+		return false
+
+	if player.has_node("CombatManager"):
+		var combat_manager = player.get_node("CombatManager") as CombatManager
+		if combat_manager.is_player_stealthed():
+			return not combat_manager.is_player_stealthed()
+	return true
+
+func _update_hitbox_detection():
+	# Check if player stealth state changed while in hitbox
+	var hitbox = get_node_or_null("Hitbox")
+	if not hitbox or not player:
+		return
+
+	var is_overlapping = hitbox.overlaps_body(player)
+	var can_detect = can_detect_player()
+
+	# Player in hitbox and detectable, but we're not tracking them
+	if is_overlapping and can_detect and not player_in_hitbox:
+		player_in_hitbox = true
+		_attack_player(player)
+		damage_timer.start()
+
+	# Player in hitbox but NOT detectable (stealthed), stop attacking
+	elif is_overlapping and not can_detect and player_in_hitbox:
+		player_in_hitbox = false
+		damage_timer.stop()
+
+	# Player left hitbox
+	elif not is_overlapping and player_in_hitbox:
+		player_in_hitbox = false
+		damage_timer.stop()
 
 func _animate_enemy():
 	var animated_sprite = $AnimatedSprite2D

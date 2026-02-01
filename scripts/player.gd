@@ -5,7 +5,6 @@ const MELEE_HITBOX = preload("uid://bpgefom8c5e3c")
 
 
 const SPEED = 200.0
-const SPRINT_MULTIPLIER = 1.8
 const FIRE_COOLDOWN = 0.5 # Seconds between shots
 const STAIRS_SOURCE = 2
 const DOOR_SOURCE = 9
@@ -21,6 +20,7 @@ var fire_timer = 0.0 # Time elapsed since last shot
 var knockback_velocity: Vector2 = Vector2.ZERO
 var knockback_friction: float = 800.0
 var original_collision_mask: int = 0
+var original_collision_layer: int = 0
 
 # Mask textures
 var mask_textures = []
@@ -33,6 +33,8 @@ signal player_died
 
 func _ready() -> void:
 	add_to_group(Groups.PLAYER)
+	combat_manager.name = "CombatManager"
+
 	add_child(combat_manager)
 	health = max_health
 	reset_position()
@@ -51,6 +53,7 @@ func _ready() -> void:
 	# Set initial mask
 	if mask_textures.size() > 0:
 		mask_sprite.texture = mask_textures[0]
+	original_collision_layer = collision_layer
 	original_collision_mask = collision_mask
 
 func reset_position() -> void:
@@ -80,11 +83,7 @@ func _physics_process(delta: float) -> void:
 		Inputs.MOVE_DOWN
 	)
 
-	var current_speed = SPEED
-	if Input.is_action_pressed(Inputs.SPRINT):
-		current_speed *= SPRINT_MULTIPLIER
-
-	current_speed *= combat_manager.get_speed_multiplier()
+	var current_speed = SPEED * combat_manager.get_speed_multiplier()
 
 	if direction != Vector2.ZERO:
 		velocity = direction * current_speed
@@ -266,12 +265,11 @@ func _on_stealth_deactivated():
 	disable_enemy_phasing()
 
 func enable_enemy_phasing():
-	# Disable collision with enemy layer (layer 4, which is bit 3 in 0-indexed)
-	# Enemy collision_layer = 141 = binary 10001101
-	# We need to turn off bits that would collide with enemies
-	# Since enemies are on multiple layers, we'll just disable the specific enemy bits
-	# Bit 0 (1), Bit 2 (4), Bit 3 (8), Bit 7 (128) = 141
-	collision_mask &= ~141
+	# Remove player from physics layers so enemies can't detect us
+	# Player is on layer 8 (bit 3), enemies check for layer 8
+	collision_layer = 0 # Remove from all collision layers
+	collision_mask &= ~4 # Also stop colliding with enemy layer (layer 3 = bit 2)
 
 func disable_enemy_phasing():
+	collision_layer = original_collision_layer
 	collision_mask = original_collision_mask

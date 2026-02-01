@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dhqxy7nqd8yvq"]
+[gd_scene format=3 uid="uid://b56ei3keqpetl"]
 
 [ext_resource type="Texture2D" uid="uid://dpqgg2x88cm7h" path="res://assets/floor.png" id="1_dubn7"]
 [ext_resource type="Texture2D" uid="uid://b17xn4u5gk3kl" path="res://assets/wall-test.png" id="2_04qyp"]
@@ -78,7 +78,7 @@ sources/10 = SubResource("TileSetAtlasSource_ifa78")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_4vge2"]
 
-[node name="Root" type="Node2D" unique_id=1359679254]
+[node name="Root3" type="Node2D" unique_id=1359679254]
 
 [node name="TileMap" type="TileMap" parent="." unique_id=1103315701]
 tile_set = SubResource("TileSet_epypp")

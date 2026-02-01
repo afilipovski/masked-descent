@@ -121,3 +121,6 @@ func get_opacity() -> float:
     if is_stealthed:
         return STEALTH_OPACITY
     return 1.0
+
+func is_player_stealthed() -> bool:
+    return is_stealthed

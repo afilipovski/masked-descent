@@ -25,6 +25,12 @@ func transition():
 
 func _on_player_detection_body_entered(body):
 	if body.is_in_group("player"):
+		# Don't detect stealthed players
+		if body.has_node("CombatManager"):
+			var cm = body.get_node("CombatManager") as CombatManager
+			if cm and cm.is_player_stealthed():
+				return
+
 		set_player_entered(true)
 
 func _on_player_detection_body_exited(body):
