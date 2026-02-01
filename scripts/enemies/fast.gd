@@ -1,4 +1,4 @@
-extends "res://scripts/enemies/base_enemy.gd"
+extends "res://scripts/enemies/base.gd"
 class_name FastEnemy
 
 func _on_ready():

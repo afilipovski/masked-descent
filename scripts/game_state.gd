@@ -8,7 +8,7 @@ var high_score: int = 0
 const BOSS_LEVEL_INTERVAL: int = 5
 
 signal level_changed(new_level: int)
-signal score_changed(new_score: int)
+signal score_changed(new_score: int, points_added: int)
 signal high_score_changed(new_high_score: int)
 
 func _ready() -> void:
@@ -18,7 +18,7 @@ func reset_level() -> void:
 	dungeon_level = 1
 	score = 0
 	level_changed.emit(dungeon_level)
-	score_changed.emit(score)
+	score_changed.emit(score, 0)
 
 func increment_level() -> void:
 	dungeon_level += 1
@@ -29,7 +29,7 @@ func is_boss_level(level: int = dungeon_level) -> bool:
 
 func add_score(points: int) -> void:
 	score += points
-	score_changed.emit(score)
+	score_changed.emit(score, points)
 	if score > high_score:
 		high_score = score
 		save_high_score()

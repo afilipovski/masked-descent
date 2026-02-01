@@ -150,13 +150,13 @@ layout_mode = 2
 [node name="MaskInventory" parent="UI" unique_id=1103877401 instance=ExtResource("2_mask_inv")]
 
 [node name="DungeonLevelLabel" type="Label" parent="UI" unique_id=286731216]
-offset_left = 7.0
-offset_top = 71.0
-offset_right = 147.0
-offset_bottom = 111.0
+offset_left = 1005.0
+offset_top = 125.0
+offset_right = 1145.0
+offset_bottom = 176.0
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_dungeon_font")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 50
 text = "Level 1"
 script = ExtResource("2_level_ui")
 
@@ -195,15 +195,27 @@ value = 100.0
 show_percentage = false
 
 [node name="ScoreLabel" type="Label" parent="UI" unique_id=1034201738]
-offset_left = 268.0
-offset_top = 74.0
-offset_right = 408.0
-offset_bottom = 99.0
+offset_left = 5.0
+offset_top = 557.0
+offset_right = 266.0
+offset_bottom = 648.0
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_dungeon_font")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 90
 text = "Score: 0"
+vertical_alignment = 1
 script = ExtResource("2_score_ui")
+
+[node name="FloatingScore" type="Label" parent="UI/ScoreLabel" unique_id=44782439]
+visible = false
+layout_mode = 0
+offset_left = 30.0
+offset_right = 130.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_fonts/font = ExtResource("2_dungeon_font")
+theme_override_font_sizes/font_size = 50
+text = "+10"
 
 [node name="GameOverScreen" type="Control" parent="UI" unique_id=491549925]
 layout_mode = 3

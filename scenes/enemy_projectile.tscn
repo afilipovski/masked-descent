@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://bdcvl5n6uxv8k"]
+
+[ext_resource type="Script" path="res://scripts/enemy_projectile.gd" id="1_enemy_proj"]
+[ext_resource type="Texture2D" path="res://assets/enemies/slime_ball.png" id="2_slime_ball"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy"]
+size = Vector2(8, 8)
+
+[node name="EnemyProjectile" type="Area2D"]
+collision_layer = 16
+collision_mask = 8
+script = ExtResource("1_enemy_proj")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_slime_ball")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_enemy")
