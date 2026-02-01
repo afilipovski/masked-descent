@@ -64,7 +64,7 @@ func _physics_process(delta):
 	move_and_slide()
 
 func take_damage(amount: int = 10):
-	var actual_damage = max(0, amount - DEF)
+	var actual_damage = max(1, amount - DEF)
 	health -= actual_damage
 	_show_damage_number(actual_damage)
 	_flash_red()
