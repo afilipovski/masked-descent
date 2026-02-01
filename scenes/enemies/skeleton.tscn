@@ -1,0 +1,102 @@
+[gd_scene format=3 uid="uid://bmppelmkn10hy"]
+
+[ext_resource type="Script" path="res://scripts/enemies/skeleton.gd" id="1_skeleton_script"]
+[ext_resource type="Texture2D" uid="uid://wrwp8dwxoa8n" path="res://assets/enemies/skeleton.png" id="1_uo8vp"]
+[ext_resource type="PackedScene" uid="uid://dlnsqouc8xk2q" path="res://scenes/effects/swoosh_attack.tscn" id="2_swoosh"]
+[ext_resource type="PackedScene" uid="uid://p7pbv3l0n55" path="res://scenes/death_effect.tscn" id="3_death"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5365w"]
+atlas = ExtResource("1_uo8vp")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_esykl"]
+atlas = ExtResource("1_uo8vp")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_038oa"]
+atlas = ExtResource("1_uo8vp")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3mw36"]
+atlas = ExtResource("1_uo8vp")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s0h66"]
+atlas = ExtResource("1_uo8vp")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6ucyf"]
+atlas = ExtResource("1_uo8vp")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8kogo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5365w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_esykl")
+}],
+"loop": true,
+"name": &"walk_down",
+"speed": 2.5
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_038oa")
+}],
+"loop": true,
+"name": &"walk_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3mw36")
+}],
+"loop": true,
+"name": &"walk_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s0h66")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6ucyf")
+}],
+"loop": true,
+"name": &"walk_up",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hitbox"]
+radius = 12.0
+
+[node name="Skeleton" type="CharacterBody2D"]
+collision_layer = 141
+collision_mask = 141
+script = ExtResource("1_skeleton_script")
+attack_effect_scene = ExtResource("2_swoosh")
+death_effect_scene = ExtResource("3_death")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_8kogo")
+animation = &"walk_down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 4)
+shape = SubResource("CircleShape2D_body")
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 137
+collision_mask = 137
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(0, 4)
+shape = SubResource("CircleShape2D_hitbox")
+
+[connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]
+[connection signal="body_exited" from="Hitbox" to="." method="_on_hitbox_body_exited"]

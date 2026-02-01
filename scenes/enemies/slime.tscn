@@ -1,0 +1,100 @@
+[gd_scene format=3 uid="uid://crhu1sgkt7163"]
+
+[ext_resource type="Texture2D" uid="uid://ckipjbcrg7li7" path="res://assets/enemies/slime.png" id="1_rldp6"]
+[ext_resource type="Script" uid="uid://d3lyc24kaf63a" path="res://scripts/enemies/slime.gd" id="1_slime_script"]
+[ext_resource type="PackedScene" uid="uid://p7pbv3l0n55" path="res://scenes/death_effect.tscn" id="3_death"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ahq63"]
+atlas = ExtResource("1_rldp6")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4h4y0"]
+atlas = ExtResource("1_rldp6")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b58ev"]
+atlas = ExtResource("1_rldp6")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ankfk"]
+atlas = ExtResource("1_rldp6")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e12yk"]
+atlas = ExtResource("1_rldp6")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bhme6"]
+atlas = ExtResource("1_rldp6")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jdcec"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ahq63")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4h4y0")
+}],
+"loop": true,
+"name": &"walk_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b58ev")
+}],
+"loop": true,
+"name": &"walk_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ankfk")
+}],
+"loop": true,
+"name": &"walk_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e12yk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bhme6")
+}],
+"loop": true,
+"name": &"walk_up",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hitbox"]
+radius = 12.0
+
+[node name="Slime" type="CharacterBody2D" unique_id=2053316662]
+collision_layer = 141
+collision_mask = 141
+script = ExtResource("1_slime_script")
+death_effect_scene = ExtResource("3_death")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=271713622]
+sprite_frames = SubResource("SpriteFrames_jdcec")
+animation = &"walk_down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1768458770]
+position = Vector2(0, 4)
+shape = SubResource("CircleShape2D_body")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=1892598637]
+collision_layer = 137
+collision_mask = 137
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=2110263244]
+position = Vector2(0, 4)
+shape = SubResource("CircleShape2D_hitbox")
+
+[connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]
+[connection signal="body_exited" from="Hitbox" to="." method="_on_hitbox_body_exited"]
