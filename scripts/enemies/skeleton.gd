@@ -8,11 +8,11 @@ class_name SkeletonEnemy
 var attack_recoil_timer: float = 0.0
 
 func _on_ready():
-	speed = 100.0
+	speed = 210.0
 	health = 5
 	max_health = 5
 	damage = 1
-	detection_range = 150.0
+	detection_range = 200.0
 
 func _update_movement(_delta: float):
 	if _handle_attack_recoil(_delta):

@@ -12,7 +12,7 @@ func _on_ready():
 	health = 10
 	max_health = 10
 	damage = 3
-	detection_range = 130.0
+	detection_range = 200.0
 
 func _update_movement(_delta: float):
 	if _handle_attack_recoil(_delta):
