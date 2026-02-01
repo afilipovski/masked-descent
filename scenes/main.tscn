@@ -223,6 +223,13 @@ theme_override_fonts/font = ExtResource("2_dungeon_font")
 theme_override_font_sizes/font_size = 32
 text = "Restart"
 
+[node name="MainMenuButton" type="Button" parent="UI/GameOverScreen/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_dungeon_font")
+theme_override_font_sizes/font_size = 32
+text = "Main Menu"
+
 [node name="TileMap" type="TileMap" parent="." unique_id=1103315701 groups=["tilemap"]]
 light_mask = 12
 visibility_layer = 11
